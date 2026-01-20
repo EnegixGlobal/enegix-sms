@@ -1,0 +1,74 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow">
+
+    <div class="card-header bg-success text-white d-flex justify-content-between">
+      <h5 class="mb-0">🚪 Room List</h5>
+      <a href="{% url 'room_add' %}" class="btn btn-light btn-sm">➕ Add Room</a>
+    </div>
+
+    <div class="card-body">
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Hostel</th>
+            <th>Hostel Type</th>
+            <th>Room No</th>
+            <th>Capacity</th>
+            <th>Occupied</th>
+            <th>Remaining Beds</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for r in rooms %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ r.hostel.name }}</td>
+
+            <td>
+              <span class="badge bg-info">
+                {{ r.hostel.get_hostel_type_display }}
+              </span>
+            </td>
+
+            <td>{{ r.room_no }}</td>
+            <td>{{ r.capacity }}</td>
+            <td>{{ r.occupied }}</td>
+
+            <td>
+              {% if r.remaining_beds > 0 %}
+                <span class="badge bg-success">
+                  {{ r.remaining_beds }}
+                </span>
+              {% else %}
+                <span class="badge bg-danger">
+                  Full
+                </span>
+              {% endif %}
+            </td>
+
+            <td>
+              <a href="{% url 'room_edit' r.id %}" class="btn btn-sm btn-warning">✏️</a>
+              <a href="{% url 'room_delete' r.id %}"
+                 class="btn btn-sm btn-danger"
+                 onclick="return confirm('Delete room?')">❌</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center text-muted">No Rooms Found</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

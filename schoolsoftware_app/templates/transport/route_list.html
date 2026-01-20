@@ -1,0 +1,37 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>Transport Routes</h4>
+
+<a href="{% url 'route_add' %}" class="btn btn-primary mb-3">+ Add Route</a>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>Route Name</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Status / Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in routes %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ r.name }}</td>
+      <td>{{ r.start_point }}</td>
+      <td>{{ r.end_point }}</td>
+      <td>
+        <a href="{% url 'route_edit' r.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'route_delete' r.id %}" class="btn btn-sm btn-danger"
+           onclick="return confirm('Delete this route?')">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="text-center">No Routes Found</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

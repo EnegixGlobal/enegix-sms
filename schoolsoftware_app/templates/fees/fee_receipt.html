@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Fee Receipt</title>
+
+<style>
+body{
+    font-family: Helvetica, Arial, sans-serif;
+    font-size:12px;
+    margin:0;
+    padding:0;
+}
+
+.receipt{
+    width:100%;
+    min-height:1100px;
+    border:2px solid #000;
+    padding:15px;
+    box-sizing:border-box;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td,th{
+    border:1px solid #000;
+    padding:6px;
+    vertical-align:top;
+}
+
+.no-border td{
+    border:none;
+}
+
+.center{text-align:center;}
+.right{text-align:right;}
+.bold{font-weight:bold;}
+
+.header{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.sub-header{
+    font-size:12px;
+}
+
+.title{
+    font-size:16px;
+    font-weight:bold;
+    text-align:center;
+    text-decoration:underline;
+    margin:10px 0;
+}
+
+.gray{
+    background:#f0f0f0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="receipt">
+
+<!-- SCHOOL HEADER -->
+<table class="no-border">
+<tr>
+<td class="header">ABC PUBLIC SCHOOL</td>
+<td class="right bold">Receipt No: {{ bill.id }}</td>
+</tr>
+<tr>
+<td class="sub-header">
+Main Road, City – 123456<br>
+Phone: 9876543210 | Email: info@school.com
+</td>
+<td class="right">Date: {{ payment.payment_date }}</td>
+</tr>
+</table>
+
+<div class="title">FEE PAYMENT RECEIPT</div>
+
+<!-- STUDENT DETAILS -->
+<table>
+<tr class="gray bold">
+<td colspan="4">STUDENT DETAILS</td>
+</tr>
+
+<tr>
+<td class="bold" width="20%">Student Name</td>
+<td width="30%">{{ bill.student.name }}</td>
+<td class="bold" width="20%">Gender</td>
+<td width="30%">{{ bill.student.gender }}</td>
+</tr>
+
+<tr>
+<td class="bold">Class</td>
+<td>{{ bill.student.school_class.name }} ({{ bill.student.section.name }})</td>
+<td class="bold">DOB</td>
+<td>{{ bill.student.dob }}</td>
+</tr>
+
+<!-- ✅ FIXED ROW -->
+<tr>
+<td class="bold">Parent Name</td>
+<td>{{ bill.student.parent|default:"N/A" }}</td>
+<td class="bold">Mobile</td>
+<td>{{ bill.student.phone|default:"N/A" }}</td>
+</tr>
+
+</table>
+
+<!-- FEE DETAILS -->
+<table style="margin-top:10px;">
+<tr class="gray bold center">
+<td width="10%">#</td>
+<td width="60%">Fee Description</td>
+<td width="30%">Amount (₹)</td>
+</tr>
+
+<tr>
+<td class="center">1</td>
+<td>
+Monthly Fee :
+{% for m in months %}
+{{ m.month }}{% if not forloop.last %}, {% endif %}
+{% endfor %}
+</td>
+<td class="right">₹ {{ total_fee }}</td>
+</tr>
+
+<tr class="bold">
+<td colspan="2" class="right">Total Amount</td>
+<td class="right">₹ {{ total_fee }}</td>
+</tr>
+
+<tr>
+<td colspan="2" class="right">Paid Amount</td>
+<td class="right">₹ {{ paid_amount }}</td>
+</tr>
+
+<tr>
+<td colspan="2" class="right">Pending Amount</td>
+<td class="right">₹ {{ pending_amount }}</td>
+</tr>
+</table>
+
+<!-- PAYMENT INFO -->
+<table style="margin-top:10px;">
+<tr>
+<td class="bold">Payment Mode</td>
+<td>{{ payment.payment_mode }}</td>
+<td class="bold">Status</td>
+<td>
+{% if pending_amount == 0 %} PAID {% else %} PENDING {% endif %}
+</td>
+</tr>
+</table>
+
+<!-- FOOTER -->
+<table class="no-border" style="margin-top:30px;">
+<tr>
+<td width="60%">
+<b>Note:</b><br>
+Fee once paid is non-refundable.
+</td>
+<td width="40%" class="right">
+<br><br>
+_______________________<br>
+Authorized Signature
+</td>
+</tr>
+</table>
+
+</div>
+
+</body>
+</html>

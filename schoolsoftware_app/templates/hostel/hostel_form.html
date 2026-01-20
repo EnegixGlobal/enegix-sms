@@ -1,0 +1,65 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow p-4">
+
+    <h4 class="mb-3">
+      {% if hostel %}✏️ Edit{% else %}➕ Add{% endif %} Hostel
+    </h4>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Hostel Name -->
+      <input name="name"
+             class="form-control mb-3"
+             placeholder="Hostel Name"
+             value="{{ hostel.name|default:'' }}"
+             required>
+
+      <!-- Hostel Type -->
+      <select name="hostel_type" class="form-control mb-3" required>
+        <option value="">Select Hostel Type</option>
+        {% for key, value in hostel_types %}
+          <option value="{{ key }}"
+            {% if hostel and hostel.hostel_type == key %}selected{% endif %}>
+            {{ value }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <!-- Address -->
+      <textarea name="address"
+                class="form-control mb-3"
+                placeholder="Hostel Address"
+                required>{{ hostel.address|default:'' }}</textarea>
+
+      <!-- Warden -->
+      <select name="warden" class="form-control mb-3">
+        <option value="">Select Warden</option>
+        {% for w in wardens %}
+          <option value="{{ w.id }}"
+            {% if hostel and hostel.warden and hostel.warden.id == w.id %}selected{% endif %}>
+            {{ w.name }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <!-- Total Rooms -->
+      <input type="number"
+             name="total_rooms"
+             class="form-control mb-3"
+             placeholder="Total Rooms"
+             value="{{ hostel.total_rooms|default:'' }}"
+             required>
+
+      <button class="btn btn-success">💾 Save Hostel</button>
+      <a href="{% url 'hostel_list' %}" class="btn btn-secondary ms-2">⬅ Back</a>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

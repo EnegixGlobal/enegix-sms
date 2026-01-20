@@ -1,0 +1,120 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block title %}Issued Books{% endblock %}
+
+{% block content %}
+
+<!-- Simple Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 px-2">
+  <div>
+    <h3 class="fw-bold mb-1">📚 Issued Books</h3>
+    <small class="text-muted">Library › Issued Book Records</small>
+  </div>
+  <a href="{% url 'issue_book' %}" class="btn btn-primary">
+    <i class="fas fa-plus me-1"></i> Issue Book
+  </a>
+</div>
+
+<div class="card shadow-sm border-0">
+
+  <!-- Card Body -->
+  <div class="card-body p-0">
+    {% if issues %}
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle mb-0">
+
+        <thead class="table-light">
+          <tr>
+            <th>Book</th>
+            <th>Issued To</th>
+            <th>Class / Section</th>
+            <th>Issued By</th>
+            <th>Issue Date</th>
+            <th>Due Date</th>
+            <th>Return Date</th>
+            <th>Fine (₹)</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for i in issues %}
+          <tr>
+
+            <td class="fw-semibold">{{ i.book.title }}</td>
+
+            <td>
+              {% if i.student %}
+                🎓 {{ i.student.name }}
+              {% else %}
+                👨‍🏫 {{ i.teacher.name }}
+              {% endif %}
+            </td>
+
+            <td>
+              {% if i.student %}
+                {{ i.student.school_class.name }} - {{ i.student.section.name }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+
+            <td>
+              {% if i.teacher %}
+                {{ i.teacher.name }}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+
+            <td>{{ i.issue_date }}</td>
+            <td>{{ i.due_date|default:"—" }}</td>
+            <td>{{ i.return_date|default:"—" }}</td>
+
+            <td>
+              {% if i.is_returned %}
+                <span class="text-success fw-semibold">₹ {{ i.fine_amount }}</span>
+              {% else %}
+                <span class="text-danger fw-semibold">₹ {{ i.calculate_fine }}</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if i.is_returned %}
+                <span class="badge bg-success">Returned</span>
+              {% else %}
+                <span class="badge bg-warning text-dark">Issued</span>
+              {% endif %}
+            </td>
+
+            <td>
+              {% if not i.is_returned %}
+              <a href="{% url 'return_book' i.id %}"
+                 class="btn btn-sm btn-outline-success">
+                Return
+              </a>
+              {% else %}
+                —
+              {% endif %}
+            </td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+    {% else %}
+    <div class="text-center p-5">
+      <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+      <h6>No Issued Books</h6>
+      <p class="text-muted mb-0">Books issued records will appear here.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

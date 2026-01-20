@@ -1,0 +1,10 @@
+<h2>{{ student.name }}</h2>
+<p><b>Roll No:</b> {{ student.roll_no }}</p>
+<p><b>Class:</b> {{ student.school_class.name }}</p>
+<p><b>Section:</b> {{ student.section.name }}</p>
+<p><b>DOB:</b> {{ student.dob }}</p>
+<p><b>Parent Phone:</b> {{ student.parent.phone }}</p>
+
+{% if student.photo %}
+  <img src="{{ student.photo.url }}" width="150">
+{% endif %}

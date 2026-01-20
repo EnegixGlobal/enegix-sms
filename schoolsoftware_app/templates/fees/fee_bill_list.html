@@ -1,0 +1,68 @@
+{% extends "base2.html" %}
+{% block content %}
+
+<h4>💰 Fee Billing</h4>
+
+<table class="table table-bordered align-middle">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Student</th>
+      <th>Month</th>
+      <th>Total</th>
+      <th>Paid</th>
+      <th>Pending</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for bill in bills %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ bill.student.name }}</td>
+
+      <td>
+        {{ bill.months.count }} Month(s)
+        <button class="btn btn-sm btn-info"
+          onclick="alert('{% for m in bill.months.all %}{{ m.month }}{% if not forloop.last %}, {% endif %}{% endfor %}')">
+          👁
+        </button>
+      </td>
+
+      <td>₹ {{ bill.total_fee }}</td>
+      <td>₹ {{ bill.paid_amount }}</td>
+      <td>₹ {{ bill.pending_amount }}</td>
+
+      <td>
+        {% if bill.pending_amount > 0 %}
+          <span class="badge bg-danger">Pending</span>
+        {% else %}
+          <span class="badge bg-success">Paid</span>
+        {% endif %}
+      </td>
+
+      <td>
+        {% if bill.is_paid %}
+          <a href="{% url 'fee_receipt_download' bill.id %}"
+            class="btn btn-sm btn-primary">
+            📄 Download Receipt
+          </a>
+        {% else %}
+          <a href="{% url 'collect_fee' bill.id %}"
+            class="btn btn-sm btn-success">
+            Collect Fee
+          </a>
+        {% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="8" class="text-center">No records</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+<h4 class="fw-bold mb-3">📆 Monthly Teacher Attendance</h4>
+
+<table class="table table-bordered table-sm text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>Teacher</th>
+            {% for d in dates %}
+                <th>{{ d.day }}</th>
+            {% endfor %}
+            <th>Per Day</th>
+            <th>Deduction</th>
+            <th>Final Salary</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for row in salary_data %}
+        <tr>
+            <td class="fw-bold">{{ row.teacher.name }}</td>
+
+            {% for d in dates %}
+            <td>
+                {{ attendance_map|get_item:(row.teacher.id,d)|default:"-" }}
+            </td>
+            {% endfor %}
+
+            <td>₹{{ row.per_day }}</td>
+            <td class="text-danger">-₹{{ row.deduction }}</td>
+            <td class="text-success fw-bold">₹{{ row.final_salary }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</div>
+
+{% endblock %}

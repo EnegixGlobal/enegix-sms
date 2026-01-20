@@ -1,0 +1,44 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>{{ title }}</h4>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <div class="mb-2">
+    <label>Class</label>
+    <select name="school_class" class="form-control" required>
+      {% for c in classes %}
+        <option value="{{ c.id }}"
+          {% if fee and fee.school_class.id == c.id %}selected{% endif %}>
+          {{ c.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-2">
+    <label>Total Fee</label>
+    <input type="number" name="total_fee" class="form-control"
+           value="{{ fee.total_fee|default:'' }}" required>
+  </div>
+
+  <div class="mb-2">
+    <label>Status</label>
+    <select name="status" class="form-control">
+      <option value="Active" {% if fee.status == 'Active' %}selected{% endif %}>Active</option>
+      <option value="Inactive" {% if fee.status == 'Inactive' %}selected{% endif %}>Inactive</option>
+    </select>
+  </div>
+
+  <div class="mb-2">
+    <label>Description</label>
+    <textarea name="description" class="form-control">{{ fee.description|default:'' }}</textarea>
+  </div>
+
+  <button class="btn btn-success">Save</button>
+  <a href="{% url 'fee_structure_list' %}" class="btn btn-secondary">Back</a>
+</form>
+
+{% endblock %}

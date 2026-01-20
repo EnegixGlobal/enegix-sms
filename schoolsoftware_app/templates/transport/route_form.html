@@ -1,0 +1,40 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>
+  {% if route %}
+    Edit Route
+  {% else %}
+    Add Route
+  {% endif %}
+</h4>
+
+<form method="post" class="card p-4">
+  {% csrf_token %}
+
+  <div class="mb-2">
+    <label>Route Name</label>
+    <input type="text" name="name" class="form-control"
+           value="{{ route.name|default:'' }}" required>
+  </div>
+
+  <div class="mb-2">
+    <label>Start Point</label>
+    <input type="text" name="start_point" class="form-control"
+           value="{{ route.start_point|default:'' }}" required>
+  </div>
+
+  <div class="mb-2">
+    <label>End Point</label>
+    <input type="text" name="end_point" class="form-control"
+           value="{{ route.end_point|default:'' }}" required>
+  </div>
+
+  <button class="btn btn-success">
+    {% if route %}Update{% else %}Save{% endif %}
+  </button>
+
+  <a href="{% url 'route_list' %}" class="btn btn-secondary">Back</a>
+</form>
+
+{% endblock %}

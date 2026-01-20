@@ -1,0 +1,50 @@
+{% extends 'base2.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow border-0">
+    <div class="card-header bg-info text-white">
+      <h5 class="mb-0">📅 Student Attendance</h5>
+    </div>
+
+    <div class="card-body">
+
+      <form method="GET" class="row g-2 mb-3">
+        <div class="col-md-3"><input type="date" name="date" class="form-control"></div>
+        <div class="col-md-3"><select name="class" class="form-control">{% for c in classes %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></div>
+        <div class="col-md-3"><select name="section" class="form-control">{% for s in sections %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select></div>
+        <div class="col-md-3 d-grid"><button class="btn btn-dark">Filter</button></div>
+      </form>
+
+      <form method="POST">
+        {% csrf_token %}
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="table-light">
+              <tr><th>Photo</th><th>Name</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+            {% for s in students %}
+              <tr>
+                <td><img src="{% if s.photo %}{{ s.photo.url }}{% else %}{% static 'img/no-profile.png' %}{% endif %}" width="35" class="rounded-circle"></td>
+                <td>{{ s.name }}</td>
+                <td>
+                  <select name="status_{{ s.id }}" class="form-control">
+                    <option>Present</option><option>Absent</option><option>Leave</option>
+                  </select>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="text-end">
+          <button class="btn btn-success">Save Attendance</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

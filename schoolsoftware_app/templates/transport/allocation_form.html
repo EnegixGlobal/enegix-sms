@@ -1,0 +1,57 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>
+  {% if allocation %}Edit Allocation{% else %}Allocate Student{% endif %}
+</h4>
+
+<form method="post" class="card p-4">
+  {% csrf_token %}
+
+  <div class="mb-3">
+    <label>Student</label>
+    <select name="student" class="form-control" required>
+      <option value="">-- Select Student --</option>
+      {% for s in students %}
+        <option value="{{ s.id }}"
+          {% if allocation and allocation.student.id == s.id %}selected{% endif %}>
+          {{ s.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label>Route</label>
+    <select name="route" class="form-control" required>
+      <option value="">-- Select Route --</option>
+      {% for r in routes %}
+        <option value="{{ r.id }}"
+          {% if allocation and allocation.route.id == r.id %}selected{% endif %}>
+          {{ r.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label>Vehicle</label>
+    <select name="vehicle" class="form-control" required>
+      <option value="">-- Select Vehicle --</option>
+      {% for v in vehicles %}
+        <option value="{{ v.id }}"
+          {% if allocation and allocation.vehicle.id == v.id %}selected{% endif %}>
+          {{ v.vehicle_no }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button class="btn btn-success">
+    {% if allocation %}Update{% else %}Save{% endif %}
+  </button>
+
+  <a href="{% url 'allocation_list' %}" class="btn btn-secondary">Back</a>
+</form>
+
+{% endblock %}

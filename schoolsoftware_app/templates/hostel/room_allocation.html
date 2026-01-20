@@ -1,0 +1,104 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+  <!-- ADD / EDIT FORM -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      {{ is_edit|yesno:"Edit Allocation,Allocate Student" }}
+    </div>
+
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+
+        <select name="student" class="form-control mb-2">
+          {% for s in students %}
+          <option value="{{ s.id }}"
+            {% if allocation and allocation.student.id == s.id %}selected{% endif %}>
+            {{ s.name }}
+          </option>
+          {% endfor %}
+        </select>
+
+        <select name="hostel" class="form-control mb-2">
+          {% for h in hostels %}
+          <option value="{{ h.id }}"
+            {% if allocation and allocation.hostel.id == h.id %}selected{% endif %}>
+            {{ h.name }}
+          </option>
+          {% endfor %}
+        </select>
+
+        <select name="room" class="form-control mb-3">
+          {% for r in rooms %}
+          <option value="{{ r.id }}"
+            {% if allocation and allocation.room.id == r.id %}selected{% endif %}>
+            {{ r.room_no }}
+          </option>
+          {% endfor %}
+        </select>
+
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+
+        <button class="btn btn-success">
+          {{ is_edit|yesno:"Update Allocation,Allocate" }}
+        </button>
+
+        {% if is_edit %}
+        <a href="{% url 'room_allocation_list' %}" class="btn btn-secondary">Cancel</a>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
+  <!-- ALLOCATION LIST -->
+  <div class="card shadow">
+    <div class="card-header bg-warning">
+      <h5 class="mb-0">👨‍🎓 Student Room Allocation List</h5>
+    </div>
+
+    <div class="card-body">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Hostel</th>
+            <th>Room</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for a in allocations %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ a.student.name }}</td>
+            <td>{{ a.hostel.name }}</td>
+            <td>{{ a.room.room_no }}</td>
+            <td>
+              <a href="{% url 'room_allocation_edit' a.id %}"
+                 class="btn btn-sm btn-warning">✏️</a>
+
+              <a href="{% url 'room_allocation_delete' a.id %}"
+                 class="btn btn-sm btn-danger"
+                 onclick="return confirm('Delete allocation?')">❌</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">No allocation found</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

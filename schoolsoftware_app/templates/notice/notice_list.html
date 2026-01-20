@@ -1,0 +1,99 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+  .notice-card {
+    border-radius: 18px;
+    border: none;
+  }
+
+  .notice-header {
+    background: linear-gradient(135deg, #6f42c1, #0d6efd);
+    color: #fff;
+    border-radius: 18px 18px 0 0;
+    padding: 18px 22px;
+  }
+
+  .btn-rounded {
+    border-radius: 30px;
+    padding: 6px 18px;
+    font-weight: 600;
+  }
+
+  table thead th {
+    background-color: #f8f9fa;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  table tbody td {
+    vertical-align: middle;
+    text-align: center;
+  }
+</style>
+
+<div class="container mt-4">
+
+  <div class="card notice-card shadow-lg">
+
+    <!-- Header -->
+    <div class="notice-header d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="mb-0">📢 Notice Board</h5>
+        <small>Manage school notices</small>
+      </div>
+      <a href="{% url 'add_notice' %}" class="btn btn-light btn-rounded">
+        ➕ Add Notice
+      </a>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body p-4">
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for n in notices %}
+            <tr>
+              <td class="fw-semibold">{{ n.title }}</td>
+              <td>{{ n.description|truncatechars:40 }}</td>
+              <td>{{ n.notice_date|date:"d M Y" }}</td>
+              <td>
+                <a href="{% url 'edit_notice' n.id %}"
+                   class="btn btn-warning btn-sm btn-rounded">
+                  ✏️ Edit
+                </a>
+                <a href="{% url 'delete_notice' n.id %}"
+                   class="btn btn-danger btn-sm btn-rounded"
+                   onclick="return confirm('Delete this notice?')">
+                  🗑 Delete
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-3">
+                No Notices Found
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

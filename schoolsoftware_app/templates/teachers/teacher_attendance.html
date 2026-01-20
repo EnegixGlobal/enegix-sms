@@ -1,0 +1,73 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">📅 Monthly Teacher Attendance</h4>
+        </div>
+
+        <div class="card-body">
+
+            <!-- MONTH SELECT -->
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <input type="number" name="month" value="{{ month }}" min="1" max="12" class="form-control">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="year" value="{{ year }}" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100">View</button>
+                </div>
+            </form>
+
+            <!-- ATTENDANCE TABLE -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm text-center">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Teacher</th>
+                            {% for d in days %}
+                                <th>{{ d }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for row in attendance_rows %}
+                        <tr>
+                            <td class="fw-bold text-start">
+                                {{ row.teacher.name }}
+                            </td>
+
+                            {% for item in row.days %}
+                                <td>
+                                    {% if item.status == 'Present' %}
+                                        <span class="badge bg-success">P</span>
+                                    {% elif item.status == 'Absent' %}
+                                        <span class="badge bg-danger">A</span>
+                                    {% elif item.status == 'Half-day' %}
+                                        <span class="badge bg-warning text-dark">HD</span>
+                                    {% elif item.status == 'Holiday' %}
+                                        <span class="badge bg-secondary">H</span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

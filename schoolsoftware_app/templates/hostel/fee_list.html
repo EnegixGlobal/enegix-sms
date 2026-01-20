@@ -1,0 +1,50 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow">
+
+    <div class="card-header bg-danger text-white d-flex justify-content-between">
+      <h5 class="mb-0">💰 Hostel Fees</h5>
+      <a href="{% url 'hostel_fee_add' %}" class="btn btn-light btn-sm">➕ Collect Fee</a>
+    </div>
+
+    <div class="card-body">
+      <table class="table table-bordered table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            {% comment %} <th>Hostel</th> {% endcomment %}
+            <th>Amount</th>
+            <th>Paid Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for f in fees %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ f.student.name }}</td>
+            {% comment %} <td>{{ f.hostel.name }}</td> {% endcomment %}
+            <td>₹ {{ f.amount }}</td>
+            <td>{{ f.paid_date }}</td>
+            <td>
+              <a href="{% url 'hostel_fee_delete' f.id %}" class="btn btn-sm btn-danger"
+                 onclick="return confirm('Delete fee record?')">❌</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted">No Fee Records Found</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

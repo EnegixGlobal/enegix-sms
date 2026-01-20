@@ -1,0 +1,37 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>Student Transport Allocation</h4>
+
+<a href="{% url 'allocation_add' %}" class="btn btn-primary mb-3">+ Allocate Student</a>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>Student</th>
+      <th>Route</th>
+      <th>Vehicle</th>
+      <th>Status / Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in allocations %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ a.student.name }}</td>
+      <td>{{ a.route.name }}</td>
+      <td>{{ a.vehicle.vehicle_no }}</td>
+      <td>
+        <a href="{% url 'allocation_edit' a.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'allocation_delete' a.id %}" class="btn btn-sm btn-danger"
+           onclick="return confirm('Delete this allocation?')">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="text-center">No Allocation Found</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

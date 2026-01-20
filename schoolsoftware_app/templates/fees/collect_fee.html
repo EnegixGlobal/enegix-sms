@@ -1,0 +1,29 @@
+{% extends "base2.html" %}
+{% block content %}
+
+<h4>Collect Fee</h4>
+
+<form method="POST">
+  {% csrf_token %}
+
+  <p><b>Student:</b> {{ bill.student.name }}</p>
+  <p><b>Total:</b> ₹ {{ bill.total_fee }}</p>
+  <p><b>Paid:</b> ₹ {{ bill.paid_amount }}</p>
+  <p><b>Pending:</b> ₹ {{ bill.pending_amount }}</p>
+
+  <input type="number" name="pay_amount" placeholder="Amount" class="form-control mb-2" required>
+
+  <select name="payment_mode" placeholder="payment_mode" class="form-control mb-2">
+    <option value="Cash">Cash</option>
+    <option value="Online">Online</option>
+    <option value="Cheque">Cheque</option>
+  </select>
+
+  <input type="date" name="payment_date" placeholder="date" value="{{ today }}" class="form-control mb-2">
+
+  <textarea name="remark" placeholder="Description" class="form-control mb-2"></textarea>
+
+  <button class="btn btn-success">Save Payment</button>
+</form>
+
+{% endblock %}

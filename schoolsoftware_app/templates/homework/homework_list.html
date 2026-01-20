@@ -1,0 +1,81 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+  <div class="card shadow-lg">
+
+    <!-- Header -->
+    <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+      <div>
+        <h5 class="mb-0">📘 Homework List</h5>
+        <small>Manage homework & files</small>
+      </div>
+      <a href="{% url 'add_homework' %}" class="btn btn-light">
+        ➕ Add Homework
+      </a>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body p-4">
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Subject</th>
+              <th>Due Date</th>
+              <th>File</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for h in homework %}
+            <tr>
+              <td>{{ h.title }}</td>
+              <td>{{ h.subject }}</td>
+              <td>{{ h.due_date }}</td>
+              {% comment %} <td>
+                {% if h.homework_file %}
+                  <a href="{{ h.homework_file.url }}" target="_blank">View</a>
+                {% else %}
+                  —
+                {% endif %}
+              </td> {% endcomment %}
+              <td>
+                  {% if h.homework_file %}
+                    <a href="{{ h.homework_file.url }}" 
+                      target="_blank"
+                      class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                      📄 View File
+                    </a>
+                  {% else %}
+                    <span class="badge bg-secondary">No File</span>
+                  {% endif %}
+              </td>
+
+              <td>
+                <a href="{% url 'edit_homework' h.id %}" class="btn btn-sm btn-success">✏️ Edit</a>
+                <a href="{% url 'delete_homework' h.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Delete homework?')">❌ Delete</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" class="text-center text-muted py-3">
+                No Homework Found
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>Vehicles</h4>
+
+<a href="{% url 'vehicle_add' %}" class="btn btn-primary mb-3">+ Add Vehicle</a>
+
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th>#</th>
+      <th>Vehicle No</th>
+      <th>Capacity</th>
+      <th>Driver</th>
+      <th>Status / Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for v in vehicles %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ v.vehicle_no }}</td>
+      <td>{{ v.capacity }}</td>
+      <td>{{ v.driver.name }}</td>
+      <td>
+        <a href="{% url 'vehicle_edit' v.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'vehicle_delete' v.id %}" class="btn btn-sm btn-danger"
+           onclick="return confirm('Delete this vehicle?')">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" class="text-center">No Vehicles Found</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

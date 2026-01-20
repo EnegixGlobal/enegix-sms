@@ -1,0 +1,95 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block title %}Issue Book{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4 px-2">
+  <div>
+    <h3 class="fw-bold mb-1">📘 Issue Book</h3>
+    <small class="text-muted">Library › Issue New Book</small>
+  </div>
+  <a href="{% url 'issue_list' %}" class="btn btn-outline-secondary">
+    ⬅ Back
+  </a>
+</div>
+
+<div class="card shadow-sm border-0">
+  <div class="card-body p-4">
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="row">
+
+        <!-- Book -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">
+            📚 Select Book
+          </label>
+          <select name="book" class="form-control" required>
+            <option value="">-- Select Book --</option>
+            {% for b in books %}
+              <option value="{{ b.id }}">{{ b.title }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Due Date -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">
+            ⏳ Due Date
+          </label>
+          <input type="date" name="due_date" class="form-control" required>
+        </div>
+
+        <!-- Student -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">
+            🎓 Student
+          </label>
+          <select name="student" class="form-control" required>
+            <option value="">-- Select Student --</option>
+            {% for s in students %}
+              <option value="{{ s.id }}">{{ s.name }}</option>
+            {% endfor %}
+          </select>
+          <small class="text-muted">Select if issuing book to a student</small>
+        </div>
+
+        <!-- Teacher -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">
+            👨‍🏫 Teacher
+          </label>
+          <select name="teacher" class="form-control" required>
+            <option value="">-- Select Teacher --</option>
+            {% for t in teachers %}
+              <option value="{{ t.id }}">{{ t.name }}</option>
+            {% endfor %}
+          </select>
+          <small class="text-muted">Select if issuing book to a teacher</small>
+        </div>
+
+      </div>
+
+      <hr class="my-4">
+
+      <!-- Actions -->
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-success px-4">
+          📕 Issue Book
+        </button>
+        <a href="{% url 'issue_list' %}" class="btn btn-light px-4">
+          Cancel
+        </a>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}

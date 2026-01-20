@@ -1,0 +1,328 @@
+/* ===== General Body Styling ===== */
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #d5f1d5 0%, #f1f8e9 100%);
+  /* background-color: #001f3f; */
+  transition: margin-left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  /* font-family: 'Inter', sans-serif; */
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* ===== Content Section ===== */
+.content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 80px 20px 60px 20px; /* navbar + footer spacing */
+  transition: margin-left 0.3s ease;
+  background: linear-gradient(145deg, #ace0f1 0%, #c7ddb0 100%);
+}
+
+body.collapsed-sidebar .content {
+  margin-left: 0;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(135deg, #1E0F13, #3C0D0D);
+  z-index: 1000;
+  padding-top: 60px; /* To avoid overlapping with fixed navbar */
+  transition: margin-left 0.3s ease;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.collapsed-sidebar .sidebar {
+  margin-left: -250px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 15px 20px;
+  color: #E8F5E8;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  font-weight: 500;
+  position: relative;
+}
+
+.sidebar a:hover {
+  background: linear-gradient(90deg, rgba(67, 113, 240, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-left: 3px solid #4f524f;
+  color: #ffffff;
+  transform: translateX(5px);
+}
+
+.sidebar a.active {
+  background: linear-gradient(90deg, #4f504f 0%, #3d423e 100%);
+  border-left: 3px solid #151616;
+  color: #ffffff;
+}
+
+/* ===== Dashboard Card Styles ===== */
+.card {
+  border: none;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Agriculture-themed card colors */
+.card.bg-primary {
+  background: linear-gradient(180deg, #021631 0%, #005baa 100%) !important;
+}
+
+.card.bg-success {
+  background: linear-gradient(180deg, #021631 0%, #005baa 100%) !important;
+}
+
+.card.bg-danger {
+  background: linear-gradient(180deg, #021631 0%, #005baa 100%) !important;
+}
+
+.card.bg-info {
+  background: linear-gradient(180deg, #021631 0%, #005baa 100%) !important;
+}
+
+.card.bg-warning {
+  background: linear-gradient(180deg, #021631 0%, #005baa 100%) !important;
+}
+
+.card.bg-dark {
+  background: linear-gradient(180deg, #021631 0%, #005baa 100%) !important;
+}
+
+/* Card body enhancements */
+.card-body {
+  position: relative;
+  z-index: 2;
+}
+
+.card-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transform: translate(20px, -20px);
+  z-index: 1;
+}
+
+.card-body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  transform: translate(-10px, 10px);
+  z-index: 1;
+}
+
+/* ===== Navbar Styling ===== */
+.navbar {
+  z-index: 1100;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #2a3e6b, #2868a0);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #080808;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-brand i {
+  color: #81C784;
+  font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
+  color: #E8F5E8 !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.btn-outline-light {
+  border-color: #0f0f0f;
+  color: #1f201f;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-light:hover {
+  background-color: #2f302f;
+  border-color: #070707;
+  color: #ffffff;
+}
+
+/* Dropdown menu styling */
+.dropdown-menu {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+}
+
+.dropdown-item {
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+  background: #f1f8e9;
+  color: #2E7D32;
+}
+
+.dropdown-item.text-danger:hover {
+  background: #ffebee;
+  color: #D32F2F;
+}
+
+/* ===== Footer Styling ===== */
+.footer {
+  background: linear-gradient(135deg, #2a3e6b, #2868a0);
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-left: 250px;
+  border-top: 2px solid #1b1b1b;
+}
+
+body.collapsed-sidebar .footer {
+  margin-left: 0;
+}
+
+.footer .text-muted {
+  color: #C8E6C9 !important;
+  font-weight: 500;
+}
+
+/* Footer Brand Colors */
+.bright {
+  color: rgb(173, 198, 206);
+  font-weight: 800;
+}
+
+.code {
+  color: #FFC107;
+  font-weight: 800;
+}
+
+.footer .text-white {
+  background: linear-gradient(180deg, #021631 0%, #005baa 100%) !important;
+  border: 1px solid #424242;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== Welcome Alert Styling ===== */
+.alert-light {
+  background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e8 100%);
+  border: 1px solid #4CAF50;
+  border-left: 4px solid #2E7D32;
+  color: #1B5E20;
+  border-radius: 12px;
+}
+
+.alert-heading {
+  color: #211f337a;
+  font-weight: 700;
+}
+
+/* ===== Dashboard Title ===== */
+.container h2 {
+  color: #7d7e7d;
+  position: relative;
+  display: inline-block;
+}
+
+.container h2::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #2E7D32, #4CAF50);
+  border-radius: 2px;
+}
+
+.accordion-button::after {
+    filter: brightness(0) invert(1);
+  }
+
+/* ===== Agriculture Icons Enhancement ===== */
+.fa-users::before { content: "\f0c0"; }
+.fa-user-check::before { content: "\f4fc"; }
+.fa-user-slash::before { content: "\f506"; }
+.fa-boxes::before { content: "\f468"; }
+.fa-hourglass-half::before { content: "\f252"; }
+.fa-check-circle::before { content: "\f058"; }
+.fa-rupee-sign::before { content: "\f156"; }
+
+/* Add subtle animations to icons */
+.card-body i {
+  transition: all 0.3s ease;
+}
+
+.card:hover .card-body i {
+  transform: scale(1.1);
+}
+
+/* ===== Responsive Fixes ===== */
+@media (max-width: 768px) {
+  .content,
+  .footer {
+    margin-left: 0 !important;
+  }
+  
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+  }
+}

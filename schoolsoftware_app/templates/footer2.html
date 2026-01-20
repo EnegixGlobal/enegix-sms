@@ -1,0 +1,23 @@
+{% load static %}
+
+<footer class="footer mt-auto">
+  <div class="container-fluid d-flex flex-column align-items-center">
+    <small class="text-muted">
+      &copy; 2025 My Dashboard. All rights reserved.
+    </small>
+    <small class="text-white fw-bold bg-black p-3 mt-2" style="border-radius: 5px;">
+      Designed by:- <span class="bright">Enegix Web Solutions</span
+      ><span class="code">pvt. Ltd.</span>
+    </small>
+  </div>
+
+  <!-- JS LINKS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document
+      .getElementById("sidebarToggle")
+      .addEventListener("click", function () {
+        document.body.classList.toggle("collapsed-sidebar");
+      });
+  </script>
+</footer>

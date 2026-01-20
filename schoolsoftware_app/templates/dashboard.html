@@ -1,0 +1,129 @@
+{% extends "base2.html" %}
+{% block content %}
+<div class="container mt-4">
+
+  <h2 class="mb-4 fw-bold">Admin Dashboard</h2>
+
+  <!-- Welcome Card -->
+  <div class="alert alert-light shadow-sm border-start border-4 border-primary mb-4 text-center" role="alert">
+    <h4 class="alert-heading">👋 Welcome back, Admin!</h4>
+    <p class="mb-1 fst-italic">"Education empowers minds, inspires hearts, and builds strong futures."</p>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Card 1 - Total Teachers -->
+    <div class="col-md-4 col-sm-6">
+      <div class="card shadow rounded h-100 text-white" style="background: linear-gradient(135deg, #0d6efd, #6610f2);">
+        <div class="card-body text-center">
+          <i class="fas fa-chalkboard-teacher fa-2x mb-2"></i>
+          <h6>Total Teachers</h6>
+          <h3>{{ total_teachers }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 - Total Students -->
+    <div class="col-md-4 col-sm-6">
+      <div class="card shadow rounded h-100 text-white" style="background: linear-gradient(135deg, #20c997, #198754);">
+        <div class="card-body text-center">
+          <i class="fas fa-user-graduate fa-2x mb-2"></i>
+          <h6>Total Students</h6>
+          <h3>{{ total_students }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 - Total Fees -->
+    <div class="col-md-4 col-sm-6">
+      <div class="card shadow rounded h-100 text-white" style="background: linear-gradient(135deg, #fd7e14, #ffc107);">
+        <div class="card-body text-center">
+          <i class="fas fa-coins fa-2x mb-2"></i>
+          <h6>Total Fees</h6>
+          <h3>₹ 3400</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 - Todays Date -->
+    <div class="col-md-6 col-sm-6">
+      <div class="card shadow rounded h-100 text-white" style="background: linear-gradient(135deg, #dc3545, #e83e8c);">
+        <div class="card-body text-center">
+          <i class="fas fa-calendar-day fa-2x mb-2"></i>
+          <h6>Today's Date</h6>
+          <h3>{{ today_date|date:"d/m/Y" }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 - Contact -->
+    <div class="col-md-6 col-sm-6">
+      <div class="card shadow rounded h-100 text-white" style="background: linear-gradient(135deg, #6c757d, #343a40);">
+        <div class="card-body text-center">
+          <i class="fas fa-phone fa-2x mb-2"></i>
+          <h6>Contact Us</h6>
+          <h3>9345128753</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chart Section -->
+  <div class="row mt-5">
+    <div class="col-md-12">
+      <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Students & Teachers Overview</h5>
+        </div>
+        <div class="card-body">
+          <canvas id="studentTeacherChart" height="100"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('studentTeacherChart').getContext('2d');
+
+  const studentTeacherChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Total Students', 'Total Teachers'],
+      datasets: [{
+        label: 'Count',
+        data: [
+          {{ total_students }},
+          {{ total_teachers }}
+        ],
+        backgroundColor: [
+          'rgba(32, 201, 151, 0.8)',   // green
+          'rgba(13, 110, 253, 0.8)'    // blue
+        ],
+        borderColor: [
+          'rgba(32, 201, 151, 1)',
+          'rgba(13, 110, 253, 1)'
+        ],
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: { mode: 'index', intersect: false }
+      },
+      scales: {
+        y: { beginAtZero: true },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends 'base2.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+/* ===================== ROOT COLORS ===================== */
+:root{
+    --primary:#4f46e5;
+    --secondary:#3b82f6;
+    --soft-bg:#f4f6ff;
+    --card-bg:#ffffff;
+    --text-dark:#1f2937;
+}
+
+/* ===================== PAGE BG ===================== */
+.page-wrapper{
+    background: var(--soft-bg);
+    padding: 25px;
+    border-radius: 20px;
+}
+
+/* ===================== HEADER ===================== */
+.page-header{
+    background: linear-gradient(135deg,var(--primary),var(--secondary));
+    border-radius: 18px;
+    padding: 22px 26px;
+    color:#fff;
+    box-shadow:0 10px 25px rgba(79,70,229,.35);
+}
+
+/* ===================== SEARCH ===================== */
+.search-box input{
+    border-radius: 50px;
+    padding: 14px 22px;
+}
+.search-box button{
+    border-radius: 50px;
+    font-weight: 600;
+}
+
+/* ===================== CARD ===================== */
+.main-card{
+    border-radius: 20px;
+    border: none;
+    background: var(--card-bg);
+    box-shadow: 0 15px 35px rgba(0,0,0,.08);
+}
+
+/* ===================== TABLE ===================== */
+.table-responsive{
+    max-height:520px;
+    overflow:auto;
+    border-radius:16px;
+}
+
+thead th{
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: linear-gradient(135deg,var(--primary),var(--secondary)) !important;
+    color:#fff !important;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: .5px;
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+}
+
+tbody tr{
+    transition: all .25s ease;
+}
+tbody tr:hover{
+    background:#eef2ff;
+    transform:scale(1.01);
+}
+
+/* ===================== PHOTO ===================== */
+.teacher-photo{
+    width:50px;
+    height:50px;
+    object-fit:cover;
+    cursor:pointer;
+    transition:all .3s ease;
+}
+.teacher-photo:hover{
+    transform:scale(1.2);
+    box-shadow:0 6px 18px rgba(0,0,0,.35);
+}
+
+/* ===================== BUTTONS ===================== */
+.btn-modern{
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+    padding:6px 16px;
+}
+
+/* ===================== STATUS ===================== */
+.badge-status{
+    padding:7px 16px;
+    border-radius:30px;
+    font-weight:600;
+    font-size:12px;
+}
+
+/* ===================== MODAL ===================== */
+.modal-content{
+    background: transparent;
+    border:none;
+}
+.modal-body img{
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,.5);
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media(max-width:768px){
+    table{font-size:12px;}
+    .btn-modern{font-size:11px;}
+}
+</style>
+
+<div class="container-fluid mt-4">
+<div class="page-wrapper">
+
+    <!-- HEADER -->
+    <div class="page-header d-flex justify-content-between align-items-center flex-wrap mb-4">
+        <h3 class="fw-bold mb-2">👩‍🏫 Teacher Management</h3>
+        <a href="{% url 'add_teacher' %}" class="btn btn-light btn-modern shadow">
+            ➕ Add Teacher
+        </a>
+    </div>
+
+    <!-- CARD -->
+    <div class="card main-card">
+        <div class="card-body">
+
+            <!-- SEARCH -->
+            <form method="GET" class="row g-3 mb-4 search-box">
+                <div class="col-md-10">
+                    <input type="text" name="q" class="form-control"
+                           placeholder="🔍 Search by name, ID, qualification..."
+                           value="{{ query }}">
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button class="btn btn-primary">
+                        🔎 Search
+                    </button>
+                </div>
+            </form>
+
+            <!-- TABLE -->
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle text-center mb-0">
+
+                    <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>Gender</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Emergency</th>
+                        <th>Qualification</th>
+                        <th>Joining</th>
+                        <th>Salary</th>
+                        <th>Experience</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for teacher in teachers %}
+                    <tr>
+                        <td>
+                            <img src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}{% static 'img/no-profile.png' %}{% endif %}"
+                                 class="rounded-circle border teacher-photo"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#photoModal"
+                                 data-bs-src="{% if teacher.photo %}{{ teacher.photo.url }}{% else %}{% static 'img/no-profile.png' %}{% endif %}">
+                        </td>
+
+                        <td class="fw-semibold">{{ teacher.employee_id }}</td>
+                        <td class="fw-bold">{{ teacher.name }}</td>
+                        <td>{{ teacher.dob }}</td>
+                        <td>{{ teacher.gender }}</td>
+                        <td>{{ teacher.phone }}</td>
+                        <td>{{ teacher.email }}</td>
+                        <td>{{ teacher.emergency_contact }}</td>
+                        <td>{{ teacher.qualification }}</td>
+                        <td>{{ teacher.joining_date }}</td>
+                        <td class="fw-bold text-success">₹ {{ teacher.salary }}</td>
+                        <td>{{ teacher.experience }} yrs</td>
+
+                        <td>
+                            {% if teacher.status == "Active" %}
+                                <span class="badge bg-success badge-status">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger badge-status">Inactive</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'edit_teacher' teacher.id %}"
+                               class="btn btn-warning btn-sm btn-modern mb-1">✏ Edit</a>
+                            <a href="{% url 'delete_teacher' teacher.id %}"
+                               onclick="return confirm('Delete this teacher?');"
+                               class="btn btn-danger btn-sm btn-modern mb-1">🗑 Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="14" class="py-4 text-muted fw-semibold">
+                            No teachers found
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- PHOTO MODAL -->
+<div class="modal fade" id="photoModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body text-center p-0">
+        <img src="" id="modalImage" class="img-fluid">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('photoModal').addEventListener('show.bs.modal', function (event) {
+    const img = event.relatedTarget;
+    document.getElementById('modalImage').src = img.getAttribute('data-bs-src');
+});
+</script>
+
+{% endblock %}

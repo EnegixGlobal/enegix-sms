@@ -1,0 +1,75 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow">
+
+    <div class="card-header bg-danger text-white">
+      <h5 class="mb-0">💰 Collect Hostel Fee</h5>
+    </div>
+
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- Student -->
+        <div class="mb-3">
+          <label class="form-label">Student</label>
+          <select name="student" class="form-control" required>
+            <option value="">-- Select Student --</option>
+            {% for s in students %}
+              <option value="{{ s.id }}">
+                {{ s.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Hostel -->
+        <div class="mb-3">
+          <label class="form-label">Hostel</label>
+          <select name="hostel" class="form-control" required>
+            <option value="">-- Select Hostel --</option>
+            {% for h in hostels %}
+              <option value="{{ h.id }}">
+                {{ h.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Amount -->
+        <div class="mb-3">
+          <label class="form-label">Amount</label>
+          <input type="number"
+                 name="amount"
+                 class="form-control"
+                 placeholder="Enter Fee Amount"
+                 required>
+        </div>
+
+        <!-- Paid Date -->
+        <div class="mb-3">
+          <label class="form-label">Paid Date</label>
+          <input type="date"
+                 name="paid_date"
+                 class="form-control"
+                 required>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between">
+          <a href="{% url 'hostel_fee_list' %}" class="btn btn-secondary">
+            ⬅ Back
+          </a>
+          <button type="submit" class="btn btn-danger">
+            💾 Save Fee
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

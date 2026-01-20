@@ -1,0 +1,208 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  .btn-outline-light {
+    color: #fff !important;
+  }
+
+  .btn-outline-light:hover {
+    color: #fff !important;
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="card shadow-sm border-0">
+
+    <!-- ================= HEADER ================= -->
+    <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+      <h5 class="mb-0">👩‍🎓 All Students</h5>
+      <div>
+        <a href="{% url 'add_student' %}" class="btn btn-success btn-sm">+ Add</a>
+        <a href="{% url 'export_students_excel' %}" class="btn btn-outline-light btn-sm">Excel</a>
+        <a href="{% url 'export_students_pdf' %}" class="btn btn-outline-light btn-sm">PDF</a>
+      </div>
+    </div>
+
+    <!-- ================= BODY ================= -->
+    <div class="card-body">
+
+      <!-- FILTERS -->
+      <form method="GET" class="row g-2 mb-3">
+        <div class="col-md-3">
+          <input name="q" class="form-control" placeholder="Search by name / roll">
+        </div>
+        <div class="col-md-2">
+          <select name="class" class="form-control">
+            <option value="">Class</option>
+            {% for c in classes %}
+              <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="section" class="form-control">
+            <option value="">Section</option>
+            {% for s in sections %}
+              <option value="{{ s.id }}">{{ s.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select name="status" class="form-control">
+            <option value="">Status</option>
+            <option>Active</option>
+            <option>Inactive</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-grid">
+          <button class="btn btn-primary">Filter</button>
+        </div>
+      </form>
+
+      <!-- TABLE -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Class</th>
+              <th>Parent</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th width="180">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in students %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>
+                <img src="{% if s.photo %}{{ s.photo.url }}{% else %}{% static 'img/no-profile.png' %}{% endif %}"
+                     width="35" height="35" class="rounded-circle">
+              </td>
+              <td class="fw-semibold">{{ s.name }}</td>
+              <td>{{ s.school_class.name }} - {{ s.section.name }}</td>
+              <td>{{ s.parent.father_name|default:"-" }}</td>
+              <td>{{ s.parent.phone|default:"-" }}</td>
+              <td>
+                <span class="badge {% if s.status == 'Active' %}bg-success{% else %}bg-secondary{% endif %}">
+                  {{ s.status }}
+                </span>
+              </td>
+              <td>
+                <!-- VIEW -->
+                <button class="btn btn-info btn-sm text-white"
+                        data-bs-toggle="modal"
+                        data-bs-target="#studentViewModal"
+                        onclick="setStudentDetails(
+                          '{{ s.name }}',
+                          '{{ s.roll_no }}',
+                          '{{ s.gender }}',
+                          '{{ s.dob }}',
+                          '{{ s.admission_date }}',
+                          '{{ s.admission_fee }}',
+                          '{{ s.school_class.name }}',
+                          '{{ s.section.name }}',
+                          '{{ s.parent.father_name|default:'-' }}',
+                          '{{ s.parent.phone|default:'-' }}',
+                          '{% if s.photo %}{{ s.photo.url }}{% else %}{% static 'img/no-profile.png' %}{% endif %}',
+                          '{{ s.status }}'
+                        )">
+                  👁
+                </button>
+
+                <a href="{% url 'edit_student' s.id %}" class="btn btn-warning btn-sm">Edit</a>
+                <a href="{% url 'delete_student' s.id %}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Delete student?')">Delete</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="8" class="text-center text-muted">No students found</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= STUDENT VIEW MODAL ================= -->
+<div class="modal fade" id="studentViewModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+
+      <div class="modal-header text-white"
+           style="background: linear-gradient(135deg,#1e3c72,#2a5298);">
+        <h5 class="modal-title">👁️ Student Profile</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div class="row g-4">
+
+          <div class="col-md-4 text-center">
+            <img id="stPhoto"
+                 class="rounded-circle shadow mb-3"
+                 style="width:140px;height:140px;object-fit:cover;">
+            <h6 id="stName" class="fw-bold"></h6>
+            <small id="stClass" class="text-muted"></small><br>
+            <span id="stStatus" class="badge mt-2"></span>
+          </div>
+
+          <div class="col-md-8">
+            <table class="table table-borderless">
+              <tr><th>Roll No</th><td id="stRoll"></td></tr>
+              <tr><th>Gender</th><td id="stGender"></td></tr>
+              <tr><th>DOB</th><td id="stDob"></td></tr>
+              <tr><th>Admission Date</th><td id="stAdmDate"></td></tr>
+              <tr><th>Admission Fee</th><td>₹ <span id="stFee"></span></td></tr>
+              <tr><th>Parent</th><td id="stParent"></td></tr>
+              <tr><th>Phone</th><td id="stPhone"></td></tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer bg-light">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+function setStudentDetails(
+  name, roll, gender, dob, admDate, fee,
+  cls, section, parent, phone, photo, status
+){
+  document.getElementById('stName').innerText = name;
+  document.getElementById('stRoll').innerText = roll || '-';
+  document.getElementById('stGender').innerText = gender;
+  document.getElementById('stDob').innerText = dob;
+  document.getElementById('stAdmDate').innerText = admDate;
+  document.getElementById('stFee').innerText = fee;
+  document.getElementById('stClass').innerText = cls + ' - ' + section;
+  document.getElementById('stParent').innerText = parent;
+  document.getElementById('stPhone').innerText = phone;
+  document.getElementById('stPhoto').src = photo;
+
+  let badge = document.getElementById('stStatus');
+  badge.innerText = status;
+  badge.className = status === 'Active'
+    ? 'badge bg-success'
+    : 'badge bg-secondary';
+}
+</script>
+
+{% endblock %}

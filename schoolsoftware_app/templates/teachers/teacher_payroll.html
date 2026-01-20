@@ -1,0 +1,131 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+    .salary-card {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .salary-header {
+        background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    }
+
+    .salary-header h4 {
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+
+    .salary-table thead th {
+        background: #1f2937 !important;
+        color: #fff !important;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    .salary-table tbody tr:hover {
+        background-color: #f1f5f9;
+        transition: 0.2s;
+    }
+
+    .badge-paid {
+        background-color: #16a34a;
+    }
+
+    .badge-pending {
+        background-color: #facc15;
+        color: #1f2937;
+    }
+
+    .btn-rounded {
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 13px;
+    }
+
+    .table-responsive {
+        max-height: 480px;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <div class="card shadow-lg border-0 salary-card">
+
+        <!-- HEADER -->
+        <div class="card-header salary-header text-white py-3">
+            <h4 class="mb-0">
+                💰 Teacher Salary Management
+            </h4>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body bg-light p-4">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center salary-table bg-white">
+
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Month</th>
+                            <th>Total Salary</th>
+                            <th>Status</th>
+                            <th style="width:180px;">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for p in payrolls %}
+                        <tr>
+
+                            <td class="fw-semibold">{{ p.teacher.employee_id }}</td>
+                            <td>{{ p.teacher.name }}</td>
+                            <td>{{ p.month|date:"F Y" }}</td>
+
+                            <td class="fw-bold text-success">
+                                ₹ {{ p.total_salary }}
+                            </td>
+
+                            <td>
+                                {% if p.status == "Paid" %}
+                                    <span class="badge badge-paid px-3 py-2">
+                                        ✔ Paid
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-pending px-3 py-2">
+                                        ⏳ Pending
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a href="{% url 'generate_salary_slip' p.id %}"
+                                   class="btn btn-sm btn-primary btn-rounded mb-1">
+                                    📄 Slip
+                                </a>
+
+                                {% if p.status == "Pending" %}
+                                <a href="{% url 'mark_salary_paid' p.id %}"
+                                   class="btn btn-sm btn-success btn-rounded mb-1">
+                                    ✔ Mark Paid
+                                </a>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

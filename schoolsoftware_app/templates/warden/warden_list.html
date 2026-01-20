@@ -1,0 +1,70 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow-lg">
+
+    <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+      <div>
+        <h5 class="mb-0">🏨 Warden Management</h5>
+        <small>Add / Update Hostel Wardens</small>
+      </div>
+      <a href="{% url 'warden_add' %}" class="btn btn-light">
+        ➕ Add Warden
+      </a>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Mobile</th>
+              <th>Email</th>
+              <th>Join Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for w in wardens %}
+            <tr>
+              <td>{{ w.name }}</td>
+              <td>{{ w.mobile }}</td>
+              <td>{{ w.email|default:"—" }}</td>
+              <td>{{ w.join_date }}</td>
+              <td>
+                {% if w.is_active %}
+                  <span class="badge bg-success">Active</span>
+                {% else %}
+                  <span class="badge bg-danger">Inactive</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'warden_edit' w.id %}" class="btn btn-sm btn-success">✏️ Edit</a>
+                <a href="{% url 'warden_delete' w.id %}"
+                   class="btn btn-sm btn-danger"
+                   onclick="return confirm('Delete this warden?')">
+                   ❌ Delete
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center text-muted py-3">
+                No Warden Found
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

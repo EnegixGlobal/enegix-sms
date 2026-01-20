@@ -1,0 +1,89 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #ffc107, #fd7e14);
+    color: #212529;
+    border-radius: 16px;
+    padding: 18px 22px;
+  }
+
+  .form-card {
+    border-radius: 16px;
+    border: none;
+  }
+
+  .form-label {
+    font-weight: 600;
+  }
+
+  .form-control {
+    border-radius: 10px;
+  }
+
+  .btn-round {
+    border-radius: 30px;
+    font-weight: 600;
+    padding: 8px 22px;
+  }
+</style>
+
+<div class="container mt-4">
+
+  <!-- Header -->
+  <div class="page-header shadow mb-4">
+    <h5 class="mb-0">✏️ Edit Section</h5>
+    <small>Update section details</small>
+  </div>
+
+  <!-- Form Card -->
+  <div class="card form-card shadow-sm">
+    <div class="card-body p-4">
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Select Class -->
+        <div class="mb-4">
+          <label class="form-label">Class</label>
+          <select name="school_class" class="form-control" required>
+            {% for c in classes %}
+              <option value="{{ c.id }}"
+                {% if c.id == section.school_class.id %}selected{% endif %}>
+                {{ c.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Section Name -->
+        <div class="mb-4">
+          <label class="form-label">Section Name</label>
+          <input
+            type="text"
+            name="name"
+            value="{{ section.name }}"
+            class="form-control"
+            required
+          >
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-success btn-round">
+            🔄 Update
+          </button>
+          <a href="{% url 'section_list' %}" class="btn btn-outline-secondary btn-round">
+            ❌ Cancel
+          </a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

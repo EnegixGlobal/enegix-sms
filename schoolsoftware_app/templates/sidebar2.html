@@ -1,0 +1,326 @@
+{% load static %}
+
+<style>
+  /* ===== Blue Glass Theme Sidebar ===== */
+  .sidebar-blue {
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    padding-top: 60px;
+    backdrop-filter: blur(15px);
+     background: linear-gradient(135deg, #2a3e6b, #2868a0);
+    border-right: 1px solid rgba(255, 255, 255, 0.25);
+    transition: all 0.3s ease;
+    overflow-y: auto;
+  }
+
+  /* Collapse */
+  body.collapsed-sidebar .sidebar-blue {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+
+  /* Links */
+  .sidebar-blue a,
+  .sidebar-blue .accordion-button {
+    color: white !important;
+    transition: all 0.25s ease;
+  }
+
+  .sidebar-blue a:hover {
+    background: rgba(255, 255, 255, 0.10);
+    box-shadow: 0 0 10px rgba(50, 180, 255, 0.7);
+    transform: translateX(4px);
+    border-radius: 8px;
+  }
+
+  .sidebar-blue hr {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Accordion */
+  .blue-accordion .accordion-button {
+    background: transparent !important;
+    border: none;
+  }
+
+  .blue-accordion .accordion-button:not(.collapsed) {
+    color: #b6e5ff !important;
+    text-shadow: 0 0 6px #b6e5ff;
+  }
+
+  .blue-accordion .accordion-body {
+    background: rgba(255, 255, 255, 0.12);
+    border-left: 2px solid #b6e5ff;
+    border-radius: 5px;
+  }
+</style>
+
+<div class="sidebar-blue text-white">
+
+  <!-- Dashboard -->
+  <a href="{% url 'dashboard' %}" class="d-block py-2 px-3 text-decoration-none">
+    <i class="fas fa-gauge me-2"></i> Dashboard
+  </a>
+
+  <hr />
+
+  <div class="accordion blue-accordion" id="blueSidebar">
+
+    <!-- Student Management -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#studentMenu">
+          <i class="fas fa-user-graduate me-2"></i> Student Management
+        </button>
+      </h2>
+      <div id="studentMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'all_students' %}" class="d-block text-white text-decoration-none py-2">➤ All Student</a>
+          <a href="{% url 'add_student' %}" class="d-block text-white text-decoration-none py-2">➤ Add Student</a>
+          <a href="{% url 'student_promotion' %}" class="d-block text-white text-decoration-none py-2">➤ Student Promotion</a>
+          <a href="{% url 'student_attendance' %}" class="d-block text-white text-decoration-none py-2">➤ Student Attendance</a>
+          <a href="{% url 'student_id_cards' %}" class="d-block text-white text-decoration-none py-2">➤ Student ID Cards</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teacher Management -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#teacherMenu">
+          <i class="fas fa-chalkboard-teacher me-2"></i> Teacher Management
+        </button>
+      </h2>
+      <div id="teacherMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'all_teachers' %}" class="d-block text-white text-decoration-none py-2">➤ All Teacher</a>
+          <a href="{% url 'add_teacher' %}" class="d-block text-white text-decoration-none py-2">➤ Add Teacher</a>
+          {% comment %} <a href="{% url '' %}" class="d-block text-white text-decoration-none py-2">➤ Teacher List</a> {% endcomment %}
+          <a href="{% url 'teacher_attendance' %}" class="d-block text-white text-decoration-none py-2">➤ Teacher Attendance</a>
+          <a href="{% url 'teacher_payroll' %}" class="d-block text-white text-decoration-none py-2">➤ Teacher Payroll</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classes -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#classMenu">
+          <i class="fas fa-school me-2"></i> Classes
+        </button>
+      </h2>
+      <div id="classMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'class_list' %}" class="d-block text-white text-decoration-none py-2">➤ Class List</a>
+          <a href="{% url 'add_class' %}" class="d-block text-white text-decoration-none py-2">➤ Add Class</a>
+          <a href="{% url 'timetable_list' %}" class="d-block text-white text-decoration-none py-2">➤ Timetable</a>
+          <a href="{% url 'section_list' %}" class="d-block text-white text-decoration-none py-2">➤ Section List</a>
+          <a href="{% url 'add_section' %}" class="d-block text-white text-decoration-none py-2">➤ Add Section</a>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Fees Management -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#feesMenu">
+          <i class="fas fa-money-check-alt me-2"></i> Fees Management
+        </button>
+      </h2>
+      <div id="feesMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'fee_structure_list' %}" class="d-block text-white text-decoration-none py-2">➤ Fee Structure</a>
+          <a href="{% url 'fee_bill_add' %}" class="d-block text-white text-decoration-none py-2">➤ Generate Fee Bill</a>
+          <a href="{% url 'fee_bill_list' %}" class="d-block text-white text-decoration-none py-2">➤ Fee Billing</a>
+          {% comment %} <a href="{% url 'fee_bill_add' %}" class="d-block text-white text-decoration-none py-2">➤ Generate Fee Bill</a> {% endcomment %}
+          {% comment %} <a href="{% url 'fee_receipt' %}" class="d-block text-white text-decoration-none py-2">➤ Fee Receipts</a> {% endcomment %}
+          <a href="{% url 'pending_fees' %}" class="d-block text-white text-decoration-none py-2">➤ Pending Fees</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exams -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#examMenu">
+          <i class="fa-solid fa-file me-2"></i> Exam Management
+        </button>
+      </h2>
+      {% comment %} <div id="examMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'add_exam' %}" class="d-block text-white text-decoration-none py-2">➤ Add Exam</a>
+          <a href="{% url 'upload_result' %}" class="d-block text-white text-decoration-none py-2">➤ Result Upload</a>
+          <a href="{% url 'report_card' %}" class="d-block text-white text-decoration-none py-2">➤ Report Cards</a>
+        </div>
+      </div> {% endcomment %}
+
+      <div id="examMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+
+          <!-- Add Exam -->
+          <a href="{% url 'add_exam' %}"
+            class="d-block text-white text-decoration-none py-2">
+            ➤ Add Exam
+          </a>
+
+          <!-- Exam List (VERY IMPORTANT) -->
+          <a href="{% url 'exam_list' %}"
+            class="d-block text-white text-decoration-none py-2">
+            ➤ Exams List
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= HOMEWORK ================= -->
+    {% comment %} <div class="accordion-item bg-dark border-0">
+      <h2 class="accordion-header" id="headingHomework">
+        <button class="accordion-button collapsed bg-dark text-white fw-semibold"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#homeworkMenu">
+          📚 Homework Management
+        </button>
+      </h2>
+
+      <div id="homeworkMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+
+          <!-- TEACHER LINKS -->
+          {% if request.user.is_staff %}
+            <a href="{% url 'add_homework' %}"
+              class="d-block text-white text-decoration-none py-2">
+              ➤ Add Homework
+            </a>
+
+            <a href="{% url 'homework_list' %}"
+              class="d-block text-white text-decoration-none py-2">
+              ➤ Homework List
+            </a>
+          {% endif %}
+
+          <!-- STUDENT LINKS -->
+          {% if not request.user.is_staff %}
+            <a href="{% url 'student_homework_list' %}"
+              class="d-block text-white text-decoration-none py-2">
+              ➤ My Homework
+            </a>
+          {% endif %}
+
+        </div>
+      </div>
+    </div> {% endcomment %}
+
+        <!-- Homework Management -->
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#homeMenu">
+          <i class="fa-brands fa-phoenix-framework me-2"></i> Homework Management
+        </button>
+      </h2>
+      <div id="homeMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'add_homework' %}" class="d-block text-white text-decoration-none py-2">➤ Add Homework</a>
+          <a href="{% url 'homework_list' %}" class="d-block text-white text-decoration-none py-2">➤ Homework List</a>
+          {% comment %} <a href="{% url 'student_homework_list' %}" class="d-block text-white text-decoration-none py-2">➤ My Homework</a> {% endcomment %}
+        </div>
+      </div>
+    </div>
+
+
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#noteMenu">
+          <i class="fa-solid fa-check me-2"></i> Notice Management
+        </button>
+      </h2>
+      <div id="noteMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'add_notice' %}" class="d-block text-white text-decoration-none py-2">➤ Add Notice</a>
+          <a href="{% url 'notice_list' %}" class="d-block text-white text-decoration-none py-2">➤ Notice List</a>
+          <a href="{% url 'homework_list' %}" class="d-block text-white text-decoration-none py-2">➤ My Homework</a>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#tranMenu">
+          <i class="fa-solid fa-bus me-2"></i> Transport Management
+        </button>
+      </h2>
+      <div id="tranMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'route_list' %}" class="d-block text-white text-decoration-none py-2">➤ Route List</a>
+          <a href="{% url 'driver_list' %}" class="d-block text-white text-decoration-none py-2">➤ Driver List</a>
+          <a href="{% url 'vehicle_list' %}" class="d-block text-white text-decoration-none py-2">➤ Vehicle List</a>
+          <a href="{% url 'allocation_list' %}" class="d-block text-white text-decoration-none py-2">➤ Allocation List</a>
+        </div>
+      </div>
+    </div>
+
+
+      <div class="accordion-item bg-transparent border-0">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#libMenu">
+            <i class="fa-solid fa-book me-2"></i> Library Management
+          </button>
+        </h2>
+        <div id="libMenu" class="accordion-collapse collapse">
+          <div class="accordion-body px-3 py-2">
+            <a href="{% url 'book_list' %}" class="d-block text-white text-decoration-none py-2">➤ Book List</a>
+            <a href="{% url 'issue_list' %}" class="d-block text-white text-decoration-none py-2">➤ Issue List</a>
+          </div>
+      </div>
+    </div>
+
+{% comment %} Hostel Management {% endcomment %}
+ <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#wardMenu">
+          <i class="fa-solid fa-hotel me-2"></i> Warden Management
+        </button>
+      </h2>
+      <div id="wardMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'warden_list' %}" class="d-block text-white text-decoration-none py-2">➤ Warden List</a>
+          <a href="{% url 'warden_add' %}" class="d-block text-white text-decoration-none py-2">➤ Add Warden</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item bg-transparent border-0">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed px-3" data-bs-toggle="collapse" data-bs-target="#hostMenu">
+          <i class="fa-solid fa-hotel me-2"></i> Hostel Management
+        </button>
+      </h2>
+      <div id="hostMenu" class="accordion-collapse collapse">
+        <div class="accordion-body px-3 py-2">
+          <a href="{% url 'hostel_list' %}" class="d-block text-white text-decoration-none py-2">➤ Hostel List</a>
+          <a href="{% url 'room_list' %}" class="d-block text-white text-decoration-none py-2">➤ Rooms</a>
+          <a href="{% url 'room_allocation_list' %}" class="d-block text-white text-decoration-none py-2">➤ Student Allocation</a>
+          <a href="{% url 'hostel_fee_list' %}" class="d-block text-white text-decoration-none py-2">➤ Hostel Fees</a>
+        </div>
+      </div>
+    </div>
+
+
+
+  </div>
+
+  <hr />
+
+  <!-- Logout -->
+  <a href="{% url 'logout' %}" class="d-block py-2 px-3 text-decoration-none">
+    <i class="fas fa-sign-out-alt me-2"></i> Logout
+  </a>
+
+</div>

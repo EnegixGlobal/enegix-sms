@@ -1,0 +1,91 @@
+{% extends 'base2.html' %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow border-0 rounded-4 mx-auto" style="max-width:900px;">
+    <div class="card-header bg-warning text-dark">
+      <h6 class="mb-0">✏️ Edit Student</h6>
+    </div>
+
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label>Name</label>
+            <input class="form-control" name="name" value="{{ student.name }}">
+          </div>
+
+          <div class="col-md-3">
+            <label>DOB</label>
+            <input type="date" class="form-control" name="dob" value="{{ student.dob|date:'Y-m-d' }}">
+          </div>
+
+          <div class="col-md-3">
+            <label>Gender</label>
+            <select name="gender" class="form-control">
+              <option {% if student.gender == "Male" %}selected{% endif %}>Male</option>
+              <option {% if student.gender == "Female" %}selected{% endif %}>Female</option>
+              <option {% if student.gender == "Other" %}selected{% endif %}>Other</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label>Class</label>
+            <select name="school_class" class="form-control">
+              {% for c in classes %}
+              <option value="{{ c.id }}" {% if student.school_class.id == c.id %}selected{% endif %}>{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label>Section</label>
+            <select name="section" class="form-control" required>
+              <option value="">Select</option>
+              {% for s in sections %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label>Roll</label>
+            <input class="form-control" name="roll_no" value="{{ student.roll_no }}">
+          </div>
+
+          <div class="col-md-4">
+            <label>Fee</label>
+            <input class="form-control" name="admission_fee" value="{{ student.admission_fee }}">
+          </div>
+
+          <div class="col-md-4">
+            <label>Status</label>
+            <select name="status" class="form-control">
+              <option {% if student.status == "Active" %}selected{% endif %}>Active</option>
+              <option {% if student.status == "Inactive" %}selected{% endif %}>Inactive</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label>Photo</label>
+            <input type="file" class="form-control" name="photo">
+          </div>
+
+          <div class="col-md-6">
+            {% if student.photo %}
+              <img src="{{ student.photo.url }}" width="70" class="rounded mt-2">
+            {% endif %}
+          </div>
+
+          <div class="col-12 text-end">
+            <a href="{% url 'all_students' %}" class="btn btn-secondary">Back</a>
+            <button class="btn btn-success">Update</button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+

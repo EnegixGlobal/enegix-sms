@@ -1,0 +1,40 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>Driver List</h4>
+
+<a href="{% url 'driver_add' %}" class="btn btn-primary mb-3">+ Add Driver</a>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Mobile</th>
+      <th>License No</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in drivers %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ d.name }}</td>
+      <td>{{ d.mobile }}</td>   <!-- ✅ YAHI IMPORTANT -->
+      <td>{{ d.license_no }}</td>
+      <td>
+        <a href="{% url 'driver_edit' d.id %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'driver_delete' d.id %}"
+           class="btn btn-sm btn-danger"
+           onclick="return confirm('Delete this driver?')">Delete</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5" class="text-center">No drivers found</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

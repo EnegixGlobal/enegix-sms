@@ -1,0 +1,24 @@
+{% extends "base2.html" %}
+{% block content %}
+
+<h4>Pending Fees</h4>
+
+<table class="table table-bordered">
+<tr>
+  <th>Student</th>
+  <th>Total</th>
+  <th>Paid</th>
+  <th>Pending</th>
+</tr>
+
+{% for bill in bills %}
+<tr>
+  <td>{{ bill.student.name }}</td>
+  <td>₹ {{ bill.total_fee }}</td>
+  <td>₹ {{ bill.paid_amount }}</td>
+  <td class="text-danger">₹ {{ bill.pending_amount }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}

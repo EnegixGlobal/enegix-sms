@@ -1,0 +1,156 @@
+{% extends 'base2.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+.id-card {
+  width: 320px;
+  height: 200px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+  overflow: hidden;
+  font-family: 'Arial', sans-serif;
+}
+
+.id-header {
+  background: #7ee2b8;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.id-body {
+  display: flex;
+  padding: 10px;
+}
+
+.id-photo {
+  width: 90px;
+  height: 110px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.id-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.id-info {
+  flex: 1;
+  padding-left: 10px;
+  font-size: 12px;
+}
+
+.id-info p {
+  margin: 2px 0;
+}
+
+{% comment %} .barcode {
+  margin-top: 6px;
+  height: 20px;
+  background: repeating-linear-gradient(
+    to right,
+    #000,
+    #000 2px,
+    #fff 2px,
+    #fff 4px
+  ); {% endcomment %}
+  .barcode-img {
+  width: 180px;       
+  height: auto;       
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+  margin-top: 4px;
+}
+}
+</style>
+
+<div class="container mt-4">
+  <h4 class="mb-3">Student ID Cards</h4>
+
+  <!-- FILTER -->
+  <form method="GET" class="row g-2 mb-4">
+    <div class="col-md-3">
+      <select name="class" class="form-control">
+        <option value="">All Class</option>
+        {% for c in classes %}
+          <option value="{{ c.id }}" {% if selected_class == c.id|stringformat:"s" %}selected{% endif %}>
+            {{ c.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <select name="section" class="form-control">
+        <option value="">All Section</option>
+        {% for sec in sections %}
+          <option value="{{ sec.id }}" {% if selected_section == sec.id|stringformat:"s" %}selected{% endif %}>
+            {{ sec.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-6 text-end">
+      <button class="btn btn-dark">Filter</button>
+      <a href="{% url 'download_id_cards_pdf' %}?class={{ selected_class }}&section={{ selected_section }}"
+         class="btn btn-primary ms-2">
+         Download PDF
+      </a>
+    </div>
+  </form>
+
+  <!-- ID CARDS GRID -->
+  <div class="row">
+    {% for s in students %}
+      <div class="col-md-4 mb-4 d-flex justify-content-center">
+        <div class="id-card">
+
+          <!-- HEADER -->
+          <div class="id-header">
+            ABC PUBLIC SCHOOL
+          </div>
+
+          <!-- BODY -->
+          <div class="id-body">
+            <div class="id-photo">
+              {% if s.photo %}
+                <img src="{{ s.photo.url }}">
+              {% else %}
+                <img src="{% static 'img/no-profile.png' %}">
+              {% endif %}
+            </div>
+
+            <div class="id-info">
+              <p><b>ID:</b> {{ s.id }}</p>
+              <p><b>Name:</b> {{ s.name }}</p>
+              <p><b>Class:</b> {{ s.school_class.name }} - {{ s.section.name }}</p>
+              <p><b>DOB:</b> {{ s.dob|date:"d/m/Y" }}</p>
+              <p><b>Phone:</b> {{ s.parent.phone|default:"-" }}</p>
+
+              {% comment %} <div class="barcode"></div> {% endcomment %}
+              {% if s.barcode %}
+                <img src="{{ s.barcode.url }}" style="width:200px; height:auto; background:white;" alt="barcode">
+              {% else %}
+                <small class="text-danger">Barcode not generated</small>
+              {% endif %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center">No students found</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}

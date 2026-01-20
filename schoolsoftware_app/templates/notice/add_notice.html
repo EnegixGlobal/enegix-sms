@@ -1,0 +1,52 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+  <div class="card shadow-lg border-0 rounded-4">
+
+    <div class="card-header text-white"
+         style="background: linear-gradient(135deg, #198754, #20c997);">
+      <h5 class="mb-0">➕ Add Notice</h5>
+    </div>
+
+    <div class="card-body p-4">
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Notice Title</label>
+          <input type="text" name="title" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Description</label>
+          <textarea name="description" rows="4"
+                    class="form-control" required></textarea>
+        </div>
+
+        <!-- ✅ Notice Date -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Notice Date</label>
+          <input type="date" name="notice_date"
+                 class="form-control" required>
+        </div>
+
+        <div class="text-end">
+          <a href="{% url 'notice_list' %}" class="btn btn-secondary rounded-pill px-4">
+            Cancel
+          </a>
+          <button type="submit" class="btn btn-success rounded-pill px-4">
+            Save Notice
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+    .class-card {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .class-header {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .class-header h4 {
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 12px;
+        padding: 10px 14px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #16a34a;
+        box-shadow: 0 0 0 0.15rem rgba(22, 163, 74, 0.25);
+    }
+
+    .btn-rounded {
+        border-radius: 30px;
+        padding: 8px 26px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <div class="card shadow-lg border-0 class-card">
+
+        <!-- HEADER -->
+        <div class="card-header class-header text-white py-3">
+            <h4 class="mb-0">
+                🏫 Add Class
+            </h4>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body bg-light p-4">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- CLASS NAME -->
+                <div class="mb-4">
+                    <label class="form-label">Class Name</label>
+                    <input type="text" name="name" class="form-control" required
+                           placeholder="Enter class name">
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="mb-4">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" rows="4"
+                              class="form-control"
+                              placeholder="Enter class description"></textarea>
+                </div>
+
+                <!-- STATUS -->
+                <div class="mb-4">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{% url 'class_list' %}"
+                       class="btn btn-secondary btn-rounded">
+                        ⬅ Back
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-success btn-rounded shadow">
+                        💾 Save Class
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+    .class-list-card {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .class-list-header {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+    }
+
+    .class-list-header h4 {
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+
+    .class-table thead th {
+        background: #1f2937 !important;
+        color: #fff !important;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+    }
+
+    .class-table tbody tr:hover {
+        background-color: #f1f5f9;
+        transition: 0.2s;
+    }
+
+    .btn-rounded {
+        border-radius: 20px;
+        padding: 4px 14px;
+        font-size: 13px;
+    }
+
+    .table-responsive {
+        max-height: 480px;
+        overflow-y: auto;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <div class="card shadow-lg border-0 class-list-card">
+
+        <!-- HEADER -->
+        <div class="card-header class-list-header text-white py-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <h4 class="mb-0">
+                    📚 Class List
+                </h4>
+
+                <a href="{% url 'add_class' %}" class="btn btn-light btn-rounded shadow-sm mt-2 mt-md-0">
+                    ➕ Add Class
+                </a>
+            </div>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body bg-light p-4">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle text-center class-table bg-white">
+
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th style="width:180px;">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for c in classes %}
+                        <tr>
+
+                            <td class="fw-semibold">{{ c.name }}</td>
+                            <td>{{ c.description }}</td>
+
+                            <td>
+                                {% if c.status == 'Active' %}
+                                    <span class="badge bg-success px-3 py-2">
+                                        ✔ Active
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary px-3 py-2">
+                                        ✖ Inactive
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <a href="{% url 'edit_class' c.id %}"
+                                   class="btn btn-sm btn-warning btn-rounded mb-1">
+                                    ✏ Edit
+                                </a>
+
+                                <a href="{% url 'delete_class' c.id %}"
+                                   class="btn btn-sm btn-danger btn-rounded mb-1"
+                                   onclick="return confirm('Delete?')">
+                                    🗑 Delete
+                                </a>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #0d6efd, #20c997);
+    color: #fff;
+    border-radius: 16px;
+    padding: 18px 22px;
+  }
+
+  .table-card {
+    border-radius: 16px;
+    border: none;
+  }
+
+  table th {
+    white-space: nowrap;
+  }
+
+  .btn-round {
+    border-radius: 30px;
+    font-weight: 600;
+    padding: 6px 16px;
+  }
+
+  .badge-section {
+    background: #e7f1ff;
+    color: #0d6efd;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+</style>
+
+<div class="container mt-4">
+
+  <!-- Header -->
+  <div class="page-header shadow mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h5 class="mb-0">📚 Class Sections</h5>
+      <small>Manage class-wise sections</small>
+    </div>
+    <a href="{% url 'add_section' %}" class="btn btn-light btn-round">
+      ➕ Add Section
+    </a>
+  </div>
+
+  <!-- Table Card -->
+  <div class="card table-card shadow-sm">
+    <div class="card-body p-4">
+
+      <div class="table-responsive">
+        <table class="table align-middle table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Class</th>
+              <th>Section</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for s in sections %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+
+              <td>
+                <span class="fw-semibold">{{ s.school_class.name }}</span>
+              </td>
+
+              <td>
+                <span class="badge-section">{{ s.name }}</span>
+              </td>
+
+              <td class="text-center">
+                <a href="{% url 'edit_section' s.id %}"
+                   class="btn btn-sm btn-warning btn-round">
+                  ✏️ Edit
+                </a>
+                <a href="{% url 'delete_section' s.id %}"
+                   class="btn btn-sm btn-danger btn-round"
+                   onclick="return confirm('Delete this section?')">
+                  🗑 Delete
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">
+                No sections found
+              </td>
+            </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends "base2.html" %}
+{% block content %}
+
+<h4>🧾 Generate Fee Bill</h4>
+
+<style>
+  .paid-month {
+    background-color: #e6f4ea;
+    border: 1px solid #28a745;
+    border-radius: 6px;
+    padding: 6px;
+  }
+  .paid-month label {
+    color: #28a745;
+    font-weight: 600;
+  }
+</style>
+
+<!-- 🔍 FILTER -->
+<div class="row mb-3">
+  <div class="col-md-4">
+    <label>Student Name</label>
+    <input type="text" id="student_name" class="form-control">
+  </div>
+
+  <div class="col-md-4">
+    <label>Class</label>
+    <select id="class_id" class="form-control">
+      <option value="">-- All Classes --</option>
+      {% for c in classes %}
+        <option value="{{ c.id }}">{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="col-md-4">
+    <label>Section</label>
+    <select id="section_id" class="form-control">
+      <option value="">-- All Sections --</option>
+      {% for s in sections %}
+        <option value="{{ s }}">{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</div>
+
+<form method="POST">
+{% csrf_token %}
+
+<!-- STUDENT -->
+<div class="mb-3">
+  <label>Student</label>
+  <select name="student" id="student_dropdown" class="form-control" required>
+    <option value="">-- Select Student --</option>
+  </select>
+</div>
+
+<!-- MONTHS -->
+<div class="mb-3">
+  <label class="fw-bold">Select Month(s)</label>
+
+  <div class="row" id="monthContainer">
+    {% for m in months %}
+    <div class="col-md-3 mb-2">
+      <div class="form-check month-box" data-month="{{ m }}">
+        <input class="form-check-input" type="checkbox"
+               name="months[]" value="{{ m }}">
+        <label class="form-check-label">
+          {{ m }} <span class="tick"></span>
+        </label>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <small class="text-muted">
+    🟢 Green tick means the fee has already been paid.
+  </small>
+</div>
+
+<!-- FEE STRUCTURE -->
+<div class="mb-3">
+  <label>Fee Structure</label>
+  <select name="fee_structure" class="form-control" required>
+    <option value="">-- Select Fee Structure --</option>
+    {% for f in structures %}
+      <option value="{{ f.id }}">
+        {{ f.school_class.name }} - ₹ {{ f.total_fee }}
+      </option>
+    {% endfor %}
+  </select>
+</div>
+
+<button class="btn btn-success">Generate Bill</button>
+<a href="{% url 'fee_bill_list' %}" class="btn btn-secondary">Back</a>
+
+</form>
+
+<script>
+const student_name = document.getElementById("student_name");
+const class_id = document.getElementById("class_id");
+const section_id = document.getElementById("section_id");
+const student_dropdown = document.getElementById("student_dropdown");
+
+function loadStudents() {
+    let name = student_name.value;
+    let cls = class_id.value;
+    let sec = section_id.value;
+
+    fetch(`/ajax/get-students/?name=${name}&class_id=${cls}&section_id=${sec}`)
+    .then(res => res.json())
+    .then(data => {
+        student_dropdown.innerHTML = '<option value="">-- Select Student --</option>';
+        data.forEach(s => {
+            let opt = document.createElement("option");
+            opt.value = s.id;
+            opt.textContent = s.text;
+            student_dropdown.appendChild(opt);
+        });
+    });
+}
+
+student_name.oninput = loadStudents;
+class_id.onchange = loadStudents;
+section_id.onchange = loadStudents;
+window.onload = loadStudents;
+
+// ✅ STUDENT CHANGE → PAID MONTHS
+student_dropdown.onchange = function () {
+    let sid = this.value;
+
+    // RESET
+    document.querySelectorAll(".month-box").forEach(box => {
+        box.classList.remove("paid-month");
+        box.querySelector(".tick").innerHTML = "";
+        let cb = box.querySelector("input");
+        cb.disabled = false;
+        cb.checked = false;
+    });
+
+    if (!sid) return;
+
+    fetch(`/fees/get-paid-months/${sid}/`)
+    .then(res => res.json())
+    .then(data => {
+        console.log("Paid Months:", data.paid_months);
+
+        data.paid_months.forEach(pm => {
+            document.querySelectorAll(".month-box").forEach(box => {
+                if (box.dataset.month.trim() === pm.trim()) {
+                    box.classList.add("paid-month");
+                    box.querySelector(".tick").innerHTML = " ✔";
+                    box.querySelector("input").disabled = true;
+                }
+            });
+        });
+    });
+};
+</script>
+
+{% endblock %}

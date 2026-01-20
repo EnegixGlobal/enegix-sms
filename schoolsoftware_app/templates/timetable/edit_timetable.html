@@ -1,0 +1,125 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+  .timetable-card {
+    border-radius: 16px;
+    border: none;
+  }
+  .timetable-header {
+    background: linear-gradient(135deg, #4e73df, #1cc88a);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    padding: 16px 20px;
+  }
+  .form-label {
+    font-weight: 600;
+    color: #4a4a4a;
+  }
+  .form-control, .form-select {
+    border-radius: 10px;
+  }
+  .btn-modern {
+    border-radius: 30px;
+    padding: 8px 22px;
+    font-weight: 600;
+  }
+</style>
+
+<div class="container mt-4">
+  <div class="card shadow timetable-card">
+
+    <!-- Header -->
+    <div class="timetable-header">
+      <h5 class="mb-0">✏️ Edit Timetable</h5>
+      <small>Update class schedule details carefully</small>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body p-4">
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- Row 1 -->
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Class</label>
+            <select name="class" class="form-control" required>
+              {% for c in classes %}
+              <option value="{{ c.id }}" {% if t.school_class.id == c.id %}selected{% endif %}>
+                {{ c.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Section</label>
+            <select name="section" class="form-control" required>
+              {% for s in sections %}
+              <option value="{{ s.id }}" {% if t.section.id == s.id %}selected{% endif %}>
+                {{ s.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Day</label>
+            <select name="day" class="form-control" required>
+              {% for d in days %}
+              <option value="{{ d }}" {% if t.day == d %}selected{% endif %}>
+                {{ d }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Subject -->
+        <div class="mb-3">
+          <label class="form-label">Subject</label>
+          <input type="text" name="subject" value="{{ t.subject }}" class="form-control" required>
+        </div>
+
+        <!-- Teacher -->
+        <div class="mb-3">
+          <label class="form-label">Teacher</label>
+          <select name="teacher" class="form-control" required>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if t.teacher.id == teacher.id %}selected{% endif %}>
+              {{ teacher.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Time -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Start Time</label>
+            <input type="time" name="start_time" value="{{ t.start_time }}" class="form-control" required>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">End Time</label>
+            <input type="time" name="end_time" value="{{ t.end_time }}" class="form-control" required>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-end mt-4">
+          <a href="{% url 'timetable_list' %}" class="btn btn-outline-secondary btn-modern me-2">
+            ⬅ Back
+          </a>
+          <button class="btn btn-success btn-modern">
+            💾 Update Timetable
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

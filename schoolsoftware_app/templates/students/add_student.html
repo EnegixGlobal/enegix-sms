@@ -1,0 +1,106 @@
+{% extends 'base2.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-header bg-gradient-primary text-white rounded-top-4">
+      <h5 class="mb-0" style="color: black;">🎓 Admit New Student</h5>
+    </div>
+
+    <div class="card-body p-4">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="fw-semibold">Student Name</label>
+            <input class="form-control" name="name" required>
+          </div>
+
+          <div class="col-md-3">
+            <label>DOB</label>
+            <input type="date" class="form-control" name="dob" required>
+          </div>
+
+          <div class="col-md-3">
+            <label>Gender</label>
+            <select name="gender" class="form-control">
+              <option>Male</option><option>Female</option><option>Other</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label>Select Parent</label>
+            <select name="parent" class="form-control">
+              <option value="">-- Existing Parent --</option>
+              {% for p in parents %}
+              <option value="{{ p.id }}">{{ p.father_name }} - {{ p.phone }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label>Father Name (New)</label>
+            <input class="form-control" name="father_name">
+          </div>
+
+          <div class="col-md-4">
+            <label>Parent Phone</label>
+            <input class="form-control" name="parent_phone">
+          </div>
+
+          <div class="col-md-3">
+            <label>Class</label>
+            <select name="school_class" class="form-control" required>
+              <option value="">Select</option>
+              {% for c in classes %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label>Section</label>
+            <select name="section" class="form-control" required>
+              <option value="">Select</option>
+              {% for s in sections %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label>Roll No</label>
+            <input class="form-control" name="roll_no">
+          </div>
+
+          <div class="col-md-3">
+            <label>Admission Date</label>
+            <input type="date" class="form-control" name="admission_date" required>
+          </div>
+
+          <div class="col-md-4">
+            <label>Admission Fee</label>
+            <input class="form-control" name="admission_fee">
+          </div>
+
+          <div class="col-md-4">
+            <label>Status</label>
+            <select name="status" class="form-control">
+              <option>Active</option><option>Inactive</option>
+            </select>
+          </div>
+
+          <div class="col-md-4">
+            <label>Photo</label>
+            <input type="file" class="form-control" name="photo">
+          </div>
+
+          <div class="col-12 text-end mt-3">
+            <button class="btn btn-success px-4">Save Student</button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

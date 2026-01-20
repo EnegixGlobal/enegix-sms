@@ -1,0 +1,136 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<style>
+    .timetable-card {
+        border-radius: 18px;
+        overflow: hidden;
+    }
+
+    .timetable-header {
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+    }
+
+    .timetable-header h4 {
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 10px 14px;
+    }
+
+    .btn-rounded {
+        border-radius: 22px;
+        padding: 6px 18px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+
+    <div class="card shadow-lg border-0 timetable-card">
+
+        <!-- HEADER -->
+        <div class="card-header timetable-header text-white py-3">
+            <h4 class="mb-0">
+                🗓 Add Timetable
+            </h4>
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body bg-light p-4">
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- ROW 1 -->
+                <div class="row g-4 mb-2">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Class</label>
+                        <select name="class" class="form-select shadow-sm">
+                            {% for c in classes %}
+                                <option value="{{ c.id }}">{{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Section</label>
+                        <select name="section" class="form-select shadow-sm">
+                            {% for s in sections %}
+                                <option value="{{ s.id }}">{{ s.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label">Day</label>
+                        <select name="day" class="form-select shadow-sm">
+                            <option>Monday</option>
+                            <option>Tuesday</option>
+                            <option>Wednesday</option>
+                            <option>Thursday</option>
+                            <option>Friday</option>
+                            <option>Saturday</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <!-- ROW 2 -->
+                <div class="row g-4 mb-2">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Subject</label>
+                        <input type="text" name="subject" class="form-control shadow-sm">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Teacher</label>
+                        <input type="text" name="teacher" class="form-control shadow-sm">
+                    </div>
+
+                </div>
+
+                <!-- ROW 3 -->
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Start Time</label>
+                        <input type="time" name="start_time" class="form-control shadow-sm">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">End Time</label>
+                        <input type="time" name="end_time" class="form-control shadow-sm">
+                    </div>
+
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="{% url 'timetable_list' %}" class="btn btn-secondary btn-rounded">
+                        ⬅ Back
+                    </a>
+
+                    <button class="btn btn-success btn-rounded shadow">
+                        💾 Save Timetable
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

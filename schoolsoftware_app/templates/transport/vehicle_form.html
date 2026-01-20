@@ -1,0 +1,43 @@
+{% extends 'base2.html' %}
+{% block content %}
+
+<h4>
+  {% if vehicle %}Edit Vehicle{% else %}Add Vehicle{% endif %}
+</h4>
+
+<form method="post" class="card p-4">
+  {% csrf_token %}
+
+  <div class="mb-3">
+    <label>Vehicle Number</label>
+    <input type="text" name="vehicle_no" class="form-control"
+           value="{{ vehicle.vehicle_no|default:'' }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label>Capacity</label>
+    <input type="number" name="capacity" class="form-control"
+           value="{{ vehicle.capacity|default:'' }}" required>
+  </div>
+
+  <div class="mb-3">
+    <label>Driver</label>
+    <select name="driver" class="form-control">
+      <option value="">-- Select Driver --</option>
+      {% for d in drivers %}
+        <option value="{{ d.id }}"
+          {% if vehicle and vehicle.driver.id == d.id %}selected{% endif %}>
+          {{ d.name }}
+        </option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button class="btn btn-success">
+    {% if vehicle %}Update{% else %}Save{% endif %}
+  </button>
+
+  <a href="{% url 'vehicle_list' %}" class="btn btn-secondary">Back</a>
+</form>
+
+{% endblock %}
