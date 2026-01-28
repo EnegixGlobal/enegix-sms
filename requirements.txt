@@ -23,7 +23,6 @@ docutils==0.21.2
 et_xmlfile==2.0.0
 filelock==3.18.0
 filetype==1.2.0
-Flask==3.1.2
 fonttools==4.60.1
 h11==0.16.0
 html5lib==1.1
@@ -34,11 +33,6 @@ itsdangerous==2.2.0
 Jinja2==3.1.6
 jiter==0.12.0
 joblib==1.5.0
-Kivy==2.3.1
-Kivy-Garden==0.1.5
-kivy_deps.angle==0.4.0
-kivy_deps.glew==0.3.1
-kivy_deps.sdl2==0.8.0
 lxml==5.4.0
 MarkupSafe==3.0.3
 numpy==2.2.6
@@ -58,12 +52,10 @@ pyHanko==0.27.1
 pyhanko-certvalidator==0.26.8
 pypdf==5.5.0
 pyphen==0.17.2
-pypiwin32==223
 python-barcode==0.16.1
 python-bidi==0.6.6
 python-dateutil==2.9.0.post0
 pytz==2025.2
-pywin32==310
 PyYAML==6.0.2
 qrcode==8.2
 reportlab==4.4.5
