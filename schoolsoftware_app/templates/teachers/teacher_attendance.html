@@ -4,61 +4,113 @@
 {% block content %}
 <div class="container-fluid mt-4">
 
-    <div class="card shadow border-0 rounded-4">
-        <div class="card-header bg-dark text-white">
+    <!-- HEADER -->
+    <div class="card shadow-lg border-0 rounded-4 mb-3"
+         style="background: linear-gradient(135deg, #1f2933, #111827);">
+        <div class="card-body text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">📅 Monthly Teacher Attendance</h4>
+            <span class="badge bg-light text-dark px-3 py-2">Smart Attendance Panel</span>
         </div>
+    </div>
 
+    <div class="card shadow border-0 rounded-4">
         <div class="card-body">
 
-            <!-- MONTH SELECT -->
+            <!-- FILTER -->
             <form method="get" class="row g-3 mb-4">
                 <div class="col-md-3">
+                    <label class="form-label fw-semibold">Month</label>
                     <input type="number" name="month" value="{{ month }}" min="1" max="12" class="form-control">
                 </div>
                 <div class="col-md-3">
+                    <label class="form-label fw-semibold">Year</label>
                     <input type="number" name="year" value="{{ year }}" class="form-control">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 d-flex align-items-end">
                     <button class="btn btn-primary w-100">View</button>
                 </div>
             </form>
 
-            <!-- ATTENDANCE TABLE -->
-            <div class="table-responsive">
-                <table class="table table-bordered table-sm text-center">
+            <!-- DOWNLOAD BUTTONS -->
+            <div class="d-flex gap-2 mb-4">
+                <input type="date" id="exportDate" class="form-control w-auto">
 
-                    <thead class="table-dark">
+                <a href="#" id="excelBtn" class="btn btn-success">
+                    📥 Export Excel
+                </a>
+
+                <a href="#" id="pdfBtn" class="btn btn-danger">
+                    📄 Export PDF
+                </a>
+            </div>
+
+            <!-- LEGEND -->
+            <div class="alert alert-light shadow-sm mb-3">
+                <strong>Legend:</strong>
+                <span class="badge bg-success ms-2">P</span> Present
+                <span class="badge bg-danger ms-2">A</span> Absent
+                <span class="badge bg-warning text-dark ms-2">HD</span> Half Day
+                <span class="badge bg-info ms-2">L</span> Leave
+                <span class="badge bg-secondary ms-2">H</span> Holiday
+            </div>
+
+            <!-- TABLE -->
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle">
+
+                    <thead class="text-white" style="background:#111827;">
                         <tr>
-                            <th>Teacher</th>
+                            <th style="min-width:200px;">Teacher</th>
+
                             {% for d in days %}
-                                <th>{{ d }}</th>
+                                <th style="width:36px;">{{ d }}</th>
                             {% endfor %}
+
+                            <!-- MONTHLY SUMMARY (COLUMN WISE) -->
+                            <th class="bg-success">P</th>
+                            <th class="bg-danger">A</th>
+                            <th class="bg-warning text-dark">HD</th>
+                            <th class="bg-info">L</th>
+                            <th class="bg-primary">Salary</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {% for row in attendance_rows %}
                         <tr>
-                            <td class="fw-bold text-start">
+                            <td class="fw-bold text-start bg-light">
                                 {{ row.teacher.name }}
                             </td>
 
                             {% for item in row.days %}
-                                <td>
-                                    {% if item.status == 'Present' %}
-                                        <span class="badge bg-success">P</span>
-                                    {% elif item.status == 'Absent' %}
-                                        <span class="badge bg-danger">A</span>
-                                    {% elif item.status == 'Half-day' %}
-                                        <span class="badge bg-warning text-dark">HD</span>
-                                    {% elif item.status == 'Holiday' %}
-                                        <span class="badge bg-secondary">H</span>
-                                    {% else %}
-                                        -
-                                    {% endif %}
-                                </td>
+                            <td class="attendance-cell"
+                                data-teacher="{{ row.teacher.id }}"
+                                data-date="{{ item.date }}"
+                                data-status="{{ item.status }}"
+                                style="width:36px;height:36px;cursor:pointer;">
+                                
+                                {% if item.status == 'Present' %}
+                                    <span class="att-badge bg-success">P</span>
+                                {% elif item.status == 'Absent' %}
+                                    <span class="att-badge bg-danger">A</span>
+                                {% elif item.status == 'Half-day' %}
+                                    <span class="att-badge bg-warning text-dark">HD</span>
+                                {% elif item.status == 'Leave' %}
+                                    <span class="att-badge bg-info">L</span>
+                                {% elif item.status == 'Holiday' %}
+                                    <span class="att-badge bg-secondary">H</span>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
                             {% endfor %}
+
+                            <!-- SUMMARY CELLS -->
+                            <td class="fw-bold text-success col-present">{{ row.present }}</td>
+                            <td class="fw-bold text-danger col-absent">{{ row.absent }}</td>
+                            <td class="fw-bold text-warning col-half">{{ row.half_day }}</td>
+                            <td class="fw-bold text-info col-leave">{{ row.leave }}</td>
+                            <td class="fw-bold text-primary col-salary">₹ {{ row.monthly_salary }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -68,6 +120,189 @@
 
         </div>
     </div>
-
 </div>
+
+<!-- ATTENDANCE MENU -->
+<div id="attendanceMenu"
+     class="card shadow position-absolute d-none"
+     style="z-index:999;width:180px;border-radius:12px;">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item attendance-option text-success" data-value="Present">✔ Present</li>
+        <li class="list-group-item attendance-option text-danger" data-value="Absent">✖ Absent</li>
+        <li class="list-group-item attendance-option text-warning" data-value="Half-day">◐ Half Day</li>
+        <li class="list-group-item attendance-option text-info" data-value="Leave">☁ Leave</li>
+    </ul>
+</div>
+
+<!-- STYLE -->
+<style>
+.att-badge{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:700;
+    color:#fff;
+}
+</style>
+
+<!-- JS (UNCHANGED) -->
+<script>
+let selectedCell = null;
+const menu = document.getElementById("attendanceMenu");
+
+// 🔹 TODAY DATE
+const today = new Date().toISOString().split("T")[0];
+
+/* ======================================================
+   🔒 LOCK FUTURE DATES (UI LEVEL)
+====================================================== */
+document.querySelectorAll(".attendance-cell").forEach(cell => {
+    const cellDate = cell.dataset.date;
+
+    if (cellDate > today) {
+        cell.style.opacity = "0.5";
+        cell.innerHTML = '<span class="att-badge bg-secondary">🔒</span>';
+    }
+});
+
+/* ======================================================
+   🖱️ CELL CLICK WITH ALERT
+====================================================== */
+document.querySelectorAll(".attendance-cell").forEach(cell => {
+    cell.addEventListener("click", function (e) {
+
+        // 🔒 FUTURE DATE ALERT
+        if (this.dataset.date > today) {
+            alert("🔒 This date is locked.\nAttendance will be enabled on the same date.");
+            return;
+        }
+
+        // 📅 HOLIDAY ALERT
+        if (this.dataset.status === "Holiday") {
+            alert("📅 This day is marked as Holiday.");
+            return;
+        }
+
+        selectedCell = this;
+        menu.classList.remove("d-none");
+        menu.style.top = e.pageY + "px";
+        menu.style.left = e.pageX + "px";
+    });
+});
+
+/* ======================================================
+   ✅ OPTION CLICK (SAVE + AUTO RECALC)
+====================================================== */
+document.querySelectorAll(".attendance-option").forEach(option => {
+    option.addEventListener("click", function () {
+
+        const status = this.dataset.value;
+        const teacherId = selectedCell.dataset.teacher;
+        const date = selectedCell.dataset.date;
+
+        fetch("{% url 'update_teacher_attendance' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `teacher_id=${teacherId}&date=${date}&status=${status}`
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+
+                selectedCell.dataset.status = status;
+
+                let html = "-";
+                if (status === "Present") html = '<span class="att-badge bg-success">P</span>';
+                if (status === "Absent") html = '<span class="att-badge bg-danger">A</span>';
+                if (status === "Half-day") html = '<span class="att-badge bg-warning text-dark">HD</span>';
+                if (status === "Leave") html = '<span class="att-badge bg-info">L</span>';
+
+                selectedCell.innerHTML = html;
+
+                // 🔥 AUTO RECALCULATE COUNTS + SALARY
+                recalcRow(selectedCell.closest("tr"));
+            }
+        });
+
+        menu.classList.add("d-none");
+    });
+});
+
+/* ======================================================
+   💰 AUTO RECALC FUNCTION
+====================================================== */
+function recalcRow(row) {
+    let present = 0, absent = 0, half = 0, leave = 0;
+
+    row.querySelectorAll(".attendance-cell").forEach(cell => {
+        const status = cell.dataset.status;
+        const date = cell.dataset.date;
+
+        if (date > today) return;
+
+        if (status === "Present") present++;
+        if (status === "Absent") absent++;
+        if (status === "Half-day") half++;
+        if (status === "Leave") leave++;
+    });
+
+    row.querySelector(".col-present").innerText = present;
+    row.querySelector(".col-absent").innerText = absent;
+    row.querySelector(".col-half").innerText = half;
+    row.querySelector(".col-leave").innerText = leave;
+
+    const perDay = parseFloat(row.dataset.perday);
+    const salary = (present * perDay) + (half * (perDay / 2));
+
+    row.querySelector(".col-salary").innerText = "₹ " + salary.toFixed(2);
+}
+
+/* ======================================================
+   ❌ CLOSE MENU ON OUTSIDE CLICK
+====================================================== */
+document.addEventListener("click", function (e) {
+    if (!e.target.closest(".attendance-cell") &&
+        !e.target.closest("#attendanceMenu")) {
+        menu.classList.add("d-none");
+    }
+});
+</script>
+
+<script>
+document.getElementById("excelBtn").addEventListener("click", function () {
+    const date = document.getElementById("exportDate").value;
+
+    if (!date) {
+        alert("Please select a date");
+        return;
+    }
+
+    window.location.href =
+        `{% url 'export_teacher_attendance_excel' %}?date=${date}`;
+});
+
+document.getElementById("pdfBtn").addEventListener("click", function () {
+    const date = document.getElementById("exportDate").value;
+
+    if (!date) {
+        alert("Please select a date");
+        return;
+    }
+
+    window.location.href =
+        `{% url 'export_teacher_attendance_pdf' %}?date=${date}`;
+});
+</script>
+
+
+
+
+
 {% endblock %}

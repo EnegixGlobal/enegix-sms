@@ -149,102 +149,58 @@ def delete_teacher(request, id):
 
 
 # Teacher Attendance
-# def teacher_attendance(request):
-#     teachers = Teacher.objects.all()
-#     today = datetime.date.today()
 
-#     if request.method == 'POST':
-#         date_str = request.POST.get('date', '').strip()
-
-#         if not date_str:
-#             # If date not selected, use today's date OR show error
-#             date = today  
-#         else:
-#             date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
-
-#         for teacher in teachers:
-#             status = request.POST.get(f'status_{teacher.id}')
-#             TeacherAttendance.objects.update_or_create(
-#                 teacher=teacher, 
-#                 date=date, 
-#                 defaults={'status': status}
-#             )
-
-#         return redirect('teacher_attendance')
-
-#     return render(request, 'teachers/teacher_attendance.html', {
-#         'teachers': teachers,
-#         'today': today
-#     })
-
-# def teacher_attendance(request):
-#     teachers = Teacher.objects.all()
-#     today = datetime.date.today()
-
-#     if request.method == 'POST':
-#         date_str = request.POST.get('date', '').strip()
-#         if not date_str:
-#             date = today
-#         else:
-#             date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
-
-#         for teacher in teachers:
-#             status = request.POST.get(f'status_{teacher.id}', 'Absent')
-#             TeacherAttendance.objects.update_or_create(
-#                 teacher=teacher,
-#                 date=date,
-#                 defaults={'status': status}
-#             )
-
-#         return redirect('teacher_attendance')
-
-#     # Get selected date attendance if exists
-#     selected_date = request.GET.get('date', today.strftime('%Y-%m-%d'))
-#     attendance_records = TeacherAttendance.objects.filter(date=selected_date)
-#     attendance_dict = {att.teacher.id: att.status for att in attendance_records}
-
-#     return render(request, 'teachers/teacher_attendance.html', {
-#         'teachers': teachers,
-#         'today': today,
-#         'attendance_dict': attendance_dict,
-#         'selected_date': selected_date
-#     })
-
-
-# def teacher_attendance(request):
-#     teachers = Teacher.objects.all()
-#     today = datetime.date.today()
-
-#     if request.method == 'POST':
-#         date_str = request.POST.get('date')
-#         date = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
-
-#         for teacher in teachers:
-#             status = request.POST.get(f'status_{teacher.id}', 'Absent')
-#             TeacherAttendance.objects.update_or_create(
-#                 teacher=teacher,
-#                 date=date,
-#                 defaults={'status': status}
-#             )
-
-#         # ✅ IMPORTANT FIX
-#         return redirect(f"{reverse('teacher_attendance')}?date={date}")
-
-#     # -------- GET REQUEST ----------
-#     selected_date = request.GET.get('date', today.strftime('%Y-%m-%d'))
-#     selected_date_obj = datetime.datetime.strptime(selected_date, '%Y-%m-%d').date()
-
-#     attendance_records = TeacherAttendance.objects.filter(date=selected_date_obj)
-#     attendance_dict = {att.teacher.id: att.status for att in attendance_records}
-
-#     return render(request, 'teachers/teacher_attendance.html', {
-#         'teachers': teachers,
-#         'attendance_dict': attendance_dict,
-#         'selected_date': selected_date,
-#         'today': today,
-#     })
 
 import calendar
+
+# def teacher_attendance(request):
+#     teachers = Teacher.objects.filter(status='Active')
+
+#     month = int(request.GET.get('month', datetime.date.today().month))
+#     year = int(request.GET.get('year', datetime.date.today().year))
+
+#     days_in_month = calendar.monthrange(year, month)[1]
+#     days = list(range(1, days_in_month + 1))
+
+#     attendance_qs = TeacherAttendance.objects.filter(
+#         date__year=year,
+#         date__month=month
+#     )
+
+#     attendance_lookup = {}
+#     for att in attendance_qs:
+#         attendance_lookup[(att.teacher_id, att.date.day)] = att.status
+
+#     attendance_rows = []
+
+#     for teacher in teachers:
+#         row = {
+#             'teacher': teacher,
+#             'days': []
+#         }
+
+#         for d in days:
+#             date_obj = datetime.date(year, month, d)
+
+#             # Sunday auto holiday
+#             if date_obj.weekday() == 6:
+#                 status = 'Holiday'
+#             else:
+#                 status = attendance_lookup.get((teacher.id, d), '-')
+
+#             row['days'].append({
+#                 'date': date_obj.strftime('%Y-%m-%d'),
+#                 'status': status
+#             })
+
+#         attendance_rows.append(row)
+
+#     return render(request, 'teachers/teacher_attendance.html', {
+#         'attendance_rows': attendance_rows,
+#         'days': days,
+#         'month': month,
+#         'year': year,
+#     })
 
 def teacher_attendance(request):
     teachers = Teacher.objects.filter(status='Active')
@@ -267,6 +223,12 @@ def teacher_attendance(request):
     attendance_rows = []
 
     for teacher in teachers:
+        present = 0
+        absent = 0
+        leave = 0
+        holiday = 0
+        half_day = Decimal('0.0')
+
         row = {
             'teacher': teacher,
             'days': []
@@ -275,16 +237,47 @@ def teacher_attendance(request):
         for d in days:
             date_obj = datetime.date(year, month, d)
 
-            # Sunday auto holiday
+            # Sunday = Holiday
             if date_obj.weekday() == 6:
                 status = 'Holiday'
+                holiday += 1
             else:
                 status = attendance_lookup.get((teacher.id, d), '-')
+
+                if status == 'Present':
+                    present += 1
+                elif status == 'Absent':
+                    absent += 1
+                elif status == 'Leave':
+                    leave += 1
+                elif status == 'Half-day':
+                    half_day += Decimal('0.5')
 
             row['days'].append({
                 'date': date_obj.strftime('%Y-%m-%d'),
                 'status': status
             })
+
+        # ---- SALARY CALCULATION (DECIMAL SAFE) ----
+        total_working_days = days_in_month - holiday
+
+        if total_working_days > 0:
+            per_day_salary = teacher.salary / Decimal(total_working_days)
+        else:
+            per_day_salary = Decimal('0.00')
+
+        payable_days = Decimal(present) + half_day
+        monthly_salary = (per_day_salary * payable_days).quantize(Decimal('0.01'))
+
+        # ---- ADD SUMMARY DATA ----
+        row.update({
+            'present': present,
+            'absent': absent,
+            'leave': leave,
+            'half_day': half_day,
+            'payable_days': payable_days,
+            'monthly_salary': monthly_salary
+        })
 
         attendance_rows.append(row)
 
@@ -318,10 +311,469 @@ def update_teacher_attendance(request):
     return JsonResponse({'success': False})
 
 
-# Teacher Payroll
+# def teacher_payroll(request):
+#     month = int(request.GET.get('month', datetime.date.today().month))
+#     year = int(request.GET.get('year', datetime.date.today().year))
+
+#     payroll_month = datetime.date(year, month, 1)
+#     days_in_month = calendar.monthrange(year, month)[1]
+#     days = list(range(1, days_in_month + 1))
+
+#     teachers = Teacher.objects.filter(status='Active')
+
+#     attendance_qs = TeacherAttendance.objects.filter(
+#         date__year=year,
+#         date__month=month
+#     )
+
+#     attendance_lookup = {
+#         (a.teacher_id, a.date.day): a.status
+#         for a in attendance_qs
+#     }
+
+#     payroll_rows = []
+
+#     for teacher in teachers:
+#         present = absent = leave = holiday = 0
+#         half_day = Decimal('0.0')
+
+#         for d in days:
+#             date_obj = datetime.date(year, month, d)
+
+#             if date_obj.weekday() == 6:
+#                 holiday += 1
+#                 continue
+
+#             status = attendance_lookup.get((teacher.id, d))
+#             if status == 'Present':
+#                 present += 1
+#             elif status == 'Absent':
+#                 absent += 1
+#             elif status == 'Leave':
+#                 leave += 1
+#             elif status == 'Half-day':
+#                 half_day += Decimal('0.5')
+
+#         total_working_days = days_in_month - holiday
+
+#         per_day_salary = (
+#             teacher.salary / Decimal(total_working_days)
+#             if total_working_days > 0 else Decimal('0.00')
+#         )
+
+#         payable_days = Decimal(present) + half_day
+#         payable_salary = (per_day_salary * payable_days).quantize(Decimal('0.01'))
+
+#         payroll, created = TeacherPayroll.objects.get_or_create(
+#             teacher=teacher,
+#             month=payroll_month,
+#             defaults={
+#                 'basic_salary': teacher.salary,
+#                 'payable_salary': payable_salary,
+#                 'allowances': Decimal('0.00'),
+#                 'deductions': Decimal('0.00'),
+#                 'status': 'Pending'
+#             }
+#         )
+
+#         # ❌ DO NOT SET payroll.total_salary
+
+#         payroll_rows.append({
+#             'payroll': payroll,
+#             'teacher': teacher,
+#             'base_salary': payroll.basic_salary,
+#             'payable_salary': payable_salary,
+#         })
+
+#     return render(request, 'teachers/teacher_payroll.html', {
+#         'payroll_rows': payroll_rows,
+#         'month': month,
+#         'year': year
+#     })
+
+
 def teacher_payroll(request):
-    payrolls = TeacherPayroll.objects.all()
-    return render(request, 'teachers/teacher_payroll.html', {'payrolls': payrolls})
+    month = int(request.GET.get('month', datetime.date.today().month))
+    year = int(request.GET.get('year', datetime.date.today().year))
+
+    payroll_month = datetime.date(year, month, 1)
+    days_in_month = calendar.monthrange(year, month)[1]
+    days = list(range(1, days_in_month + 1))
+
+    teachers = Teacher.objects.filter(status='Active')
+
+    attendance_qs = TeacherAttendance.objects.filter(
+        date__year=year,
+        date__month=month
+    )
+
+    attendance_lookup = {
+        (a.teacher_id, a.date.day): a.status
+        for a in attendance_qs
+    }
+
+    payroll_rows = []
+
+    for teacher in teachers:
+        present = absent = leave = holiday = 0
+        half_day = Decimal('0.0')
+
+        for d in days:
+            date_obj = datetime.date(year, month, d)
+
+            # Sunday = Holiday
+            if date_obj.weekday() == 6:
+                holiday += 1
+                continue
+
+            status = attendance_lookup.get((teacher.id, d))
+
+            if status == 'Present':
+                present += 1
+            elif status == 'Absent':
+                absent += 1
+            elif status == 'Leave':
+                leave += 1
+            elif status == 'Half-day':
+                half_day += Decimal('0.5')
+
+        total_working_days = days_in_month - holiday
+
+        per_day_salary = (
+            teacher.salary / Decimal(total_working_days)
+            if total_working_days > 0 else Decimal('0.00')
+        )
+
+        payable_days = Decimal(present) + half_day
+        payable_salary = (per_day_salary * payable_days).quantize(Decimal('0.01'))
+
+        # ✅ CREATE OR UPDATE PAYROLL (FIXED)
+        payroll, created = TeacherPayroll.objects.get_or_create(
+            teacher=teacher,
+            month=payroll_month,
+            defaults={
+                'basic_salary': teacher.salary,
+                'payable_salary': payable_salary,
+                'allowances': Decimal('0.00'),
+                'deductions': Decimal('0.00'),
+                'status': 'Pending'
+            }
+        )
+
+        # 🔥 ALWAYS UPDATE PAYABLE SALARY
+        if not created:
+            payroll.basic_salary = teacher.salary
+            payroll.payable_salary = payable_salary
+            payroll.save()
+
+        payroll_rows.append({
+            'payroll': payroll,
+            'teacher': teacher,
+            'base_salary': payroll.basic_salary,
+            'payable_salary': payroll.payable_salary,
+        })
+
+    return render(request, 'teachers/teacher_payroll.html', {
+        'payroll_rows': payroll_rows,
+        'month': month,
+        'year': year
+    })
+
+
+
+
+
+def mark_salary_paid(request, pk):
+    payroll = get_object_or_404(TeacherPayroll, pk=pk)
+    payroll.status = 'Paid'
+    payroll.save()
+    messages.success(request, "Salary marked as Paid")
+    return redirect('teacher_payroll')
+
+
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+
+
+def download_salary_slip(request, pk):
+    payroll = get_object_or_404(TeacherPayroll, pk=pk)
+
+    # ✅ VALUES (IMPORTANT)
+    base_salary = payroll.basic_salary
+    payable_salary = payroll.payable_salary  
+
+    html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salary Slip</title>
+
+    <style>
+        @page {{
+            size: A4;
+            margin: 20mm;
+        }}
+
+        body {{
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f3f4f6;
+            color: #111827;
+        }}
+
+        .slip-wrapper {{
+            background: #ffffff;
+            padding: 40px;
+            height: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }}
+
+        .header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }}
+
+        .school-name {{
+            font-size: 24px;
+            font-weight: 700;
+            color: #2563eb;
+        }}
+
+        .salary-title {{
+            text-align: right;
+        }}
+
+        .salary-title h2 {{
+            margin: 0;
+            font-size: 22px;
+        }}
+
+        .salary-title p {{
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 14px;
+        }}
+
+        .info-grid {{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 35px;
+        }}
+
+        .info-box {{
+            background: #f9fafb;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+        }}
+
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }}
+
+        th, td {{
+            border: 1px solid #e5e7eb;
+            padding: 14px;
+            font-size: 14px;
+        }}
+
+        th {{
+            background: #e0f2fe;
+            text-align: left;
+        }}
+
+        .amount {{
+            text-align: right;
+            font-weight: 600;
+        }}
+
+        .total-row td {{
+            background: #ecfeff;
+            font-weight: 700;
+            font-size: 15px;
+        }}
+
+        .status {{
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #dcfce7;
+            color: #166534;
+        }}
+
+        .footer {{
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: #6b7280;
+        }}
+
+        .signature {{
+            text-align: center;
+        }}
+
+        .signature div {{
+            margin-top: 45px;
+            border-top: 1px solid #9ca3af;
+            width: 200px;
+            padding-top: 6px;
+        }}
+    </style>
+</head>
+
+<body>
+
+<div class="slip-wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="school-name">🏫 Your School Name</div>
+        <div class="salary-title">
+            <h2>Salary Slip</h2>
+            <p>{payroll.month.strftime('%B %Y')}</p>
+        </div>
+    </div>
+
+    <!-- EMPLOYEE INFO -->
+    <div class="info-grid">
+        <div class="info-box"><strong>Employee Name</strong><br>{payroll.teacher.name}</div>
+        <div class="info-box"><strong>Employee ID</strong><br>{payroll.teacher.employee_id}</div>
+        <div class="info-box"><strong>Pay Month</strong><br>{payroll.month.strftime('%B %Y')}</div>
+        <div class="info-box"><strong>Status</strong><br><span class="status">{payroll.status}</span></div>
+    </div>
+
+    <!-- SALARY DETAILS -->
+    <table>
+        <tr>
+            <th>Description</th>
+            <th class="amount">Amount (₹)</th>
+        </tr>
+
+        <tr>
+            <td>Base Salary</td>
+            <td class="amount">₹ {base_salary}</td>
+        </tr>
+
+        <tr>
+            <td>Allowances</td>
+            <td class="amount">₹ {payroll.allowances}</td>
+        </tr>
+
+        <tr>
+            <td>Deductions</td>
+            <td class="amount">- ₹ {payroll.deductions}</td>
+        </tr>
+
+        <tr class="total-row">
+            <td>Payable Salary</td>
+            <td class="amount">₹ {payable_salary}</td>
+        </tr>
+    </table>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div>✔ This is a system generated salary slip</div>
+        <div class="signature">
+            <div>Authorized Signature</div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
+"""
+
+    return HttpResponse(html)
+
+
+def download_salary_slip_pdf(request, pk):
+    payroll = get_object_or_404(TeacherPayroll, pk=pk)
+
+    html = f"""
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: Helvetica;
+                font-size: 12px;
+            }}
+            h2 {{
+                text-align: center;
+                color: #2563eb;
+            }}
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }}
+            th, td {{
+                border: 1px solid #444;
+                padding: 8px;
+            }}
+            th {{
+                background: #e0f2fe;
+            }}
+            .right {{
+                text-align: right;
+            }}
+        </style>
+    </head>
+    <body>
+
+        <h2>Salary Slip</h2>
+        <p><strong>Employee:</strong> {payroll.teacher.name}</p>
+        <p><strong>Employee ID:</strong> {payroll.teacher.employee_id}</p>
+        <p><strong>Month:</strong> {payroll.month.strftime('%B %Y')}</p>
+        <p><strong>Status:</strong> {payroll.status}</p>
+
+        <table>
+            <tr>
+                <th>Description</th>
+                <th class="right">Amount (₹)</th>
+            </tr>
+            <tr>
+                <td>Base Salary</td>
+                <td class="right">{payroll.basic_salary}</td>
+            </tr>
+            <tr>
+                <td>Allowances</td>
+                <td class="right">{payroll.allowances}</td>
+            </tr>
+            <tr>
+                <td>Deductions</td>
+                <td class="right">- {payroll.deductions}</td>
+            </tr>
+            <tr>
+                <th>Total Payable</th>
+                <th class="right">{payroll.payable_salary}</th>
+            </tr>
+        </table>
+
+        <p style="margin-top:40px;">✔ System Generated Salary Slip</p>
+
+    </body>
+    </html>
+    """
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = (
+        f'attachment; filename="SalarySlip_{payroll.teacher.employee_id}.pdf"'
+    )
+
+    pisa.CreatePDF(html, dest=response)
+    return response
 
 
 

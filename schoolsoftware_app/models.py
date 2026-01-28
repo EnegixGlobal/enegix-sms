@@ -58,6 +58,7 @@ class TeacherPayroll(models.Model):
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
     month = models.DateField()
     basic_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    payable_salary = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     allowances = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     deductions = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     status = models.CharField(max_length=10, choices=[('Paid', 'Paid'), ('Pending', 'Pending')], default='Pending')

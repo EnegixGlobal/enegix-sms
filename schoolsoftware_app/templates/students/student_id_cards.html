@@ -137,11 +137,11 @@
               <p><b>Phone:</b> {{ s.parent.phone|default:"-" }}</p>
 
               {% comment %} <div class="barcode"></div> {% endcomment %}
-              {% if s.barcode %}
+              {% comment %} {% if s.barcode %}
                 <img src="{{ s.barcode.url }}" style="width:200px; height:auto; background:white;" alt="barcode">
               {% else %}
                 <small class="text-danger">Barcode not generated</small>
-              {% endif %}
+              {% endif %} {% endcomment %}
             </div>
           </div>
 
