@@ -85,3 +85,4 @@ zopfli==0.2.3.post1
 gunicorn==21.2.0
 psycopg[binary]==3.2.13
 dj-database-url==2.1.0
+whitenoise==6.8.2
