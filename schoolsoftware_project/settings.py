@@ -29,7 +29,13 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-9acns6jof=ok_$knycj0)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+# ALLOWED_HOSTS configuration for Render
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_EXTERNAL_HOSTNAME, 'localhost']
+else:
+    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+
 
 
 # Application definition
